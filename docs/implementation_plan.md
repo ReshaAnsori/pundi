@@ -132,11 +132,11 @@ Tabel tambahan di fase lanjut: `AdCampaign`, `BudgetRule`, `SpendLog`, `ProductS
 ### Fase 0 — Fondasi
 **Tujuan:** project siap dikembangkan.
 - [x] `nest new backend`, "Hello World!" tampil
-- [ ] Instal Prisma 7 + adapter SQLite, `prisma init --datasource-provider sqlite`
-- [ ] `ConfigModule` global, `.env` (`DATABASE_URL`, `API_KEY`)
-- [ ] `PrismaModule` + `PrismaService`
-- [ ] Guard API key sederhana + `ValidationPipe` global
-- [ ] Git init, `.env` masuk `.gitignore`
+- [x] Instal Prisma 7 + adapter SQLite, `prisma init --datasource-provider sqlite`
+- [x] `ConfigModule` global, `.env` (`DATABASE_URL`, `API_KEY`)
+- [x] `PrismaModule` + `PrismaService`
+- [x] Guard API key sederhana + `ValidationPipe` global
+- [x] Git init, `.env` masuk `.gitignore`
 
 **Selesai bila:** `GET /health` mengembalikan OK dan bisa query SQLite lewat Prisma.
 
