@@ -17,4 +17,33 @@ import * as Prisma from './internal/prismaNamespaceBrowser.js'
 export { Prisma }
 export * as $Enums from './enums.js'
 export * from './enums.js';
-
+/**
+ * Model Platform
+ * 
+ */
+export type Platform = Prisma.PlatformModel
+/**
+ * Model Product
+ * 
+ */
+export type Product = Prisma.ProductModel
+/**
+ * Model Content
+ * 
+ */
+export type Content = Prisma.ContentModel
+/**
+ * Model AffiliateLink
+ * 
+ */
+export type AffiliateLink = Prisma.AffiliateLinkModel
+/**
+ * Model Commission
+ * 
+ */
+export type Commission = Prisma.CommissionModel
+/**
+ * Model SyncRun
+ * 
+ */
+export type SyncRun = Prisma.SyncRunModel

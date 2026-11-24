@@ -31,8 +31,8 @@ export * from "./enums.js"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more Platforms
+ * const platforms = await prisma.platform.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -41,4 +41,33 @@ export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 export { Prisma }
 
-
+/**
+ * Model Platform
+ * 
+ */
+export type Platform = Prisma.PlatformModel
+/**
+ * Model Product
+ * 
+ */
+export type Product = Prisma.ProductModel
+/**
+ * Model Content
+ * 
+ */
+export type Content = Prisma.ContentModel
+/**
+ * Model AffiliateLink
+ * 
+ */
+export type AffiliateLink = Prisma.AffiliateLinkModel
+/**
+ * Model Commission
+ * 
+ */
+export type Commission = Prisma.CommissionModel
+/**
+ * Model SyncRun
+ * 
+ */
+export type SyncRun = Prisma.SyncRunModel

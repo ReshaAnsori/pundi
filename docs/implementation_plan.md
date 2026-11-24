@@ -142,10 +142,10 @@ Tabel tambahan di fase lanjut: `AdCampaign`, `BudgetRule`, `SpendLog`, `ProductS
 
 ### Fase 1 — Data inti & Link Manager
 **Tujuan:** bisa mencatat produk, konten, dan membuat link ber-`subId`.
-- [ ] Migrasi skema Fase 1
-- [ ] CRUD `Platform`, `Product`, `Content`
-- [ ] `LinksService`: generate `subId` unik per (produk, konten), simpan `trackingUrl`
-- [ ] Endpoint: `POST /links`, `GET /links`, `GET /contents/:id/links`
+- [x] Migrasi skema Fase 1
+- [x] CRUD `Platform`, `Product`, `Content`
+- [x] `LinksService`: generate `subId` unik per (produk, konten), simpan `trackingUrl`
+- [x] Endpoint: `POST /links`, `GET /links`, `GET /contents/:id/links`
 
 **Selesai bila:** untuk satu konten bisa dibuat link dan `subId`-nya tersimpan serta unik.
 

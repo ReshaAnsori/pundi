@@ -8,4 +8,10 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/Platform.js'
+export type * from './models/Product.js'
+export type * from './models/Content.js'
+export type * from './models/AffiliateLink.js'
+export type * from './models/Commission.js'
+export type * from './models/SyncRun.js'
 export type * from './commonInputTypes.js'

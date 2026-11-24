@@ -51,7 +51,12 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-
+  Platform: 'Platform',
+  Product: 'Product',
+  Content: 'Content',
+  AffiliateLink: 'AffiliateLink',
+  Commission: 'Commission',
+  SyncRun: 'SyncRun'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -65,4 +70,105 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const PlatformScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+} as const
+
+export type PlatformScalarFieldEnum = (typeof PlatformScalarFieldEnum)[keyof typeof PlatformScalarFieldEnum]
+
+
+export const ProductScalarFieldEnum = {
+  id: 'id',
+  platformId: 'platformId',
+  externalId: 'externalId',
+  name: 'name',
+  price: 'price',
+  commissionRate: 'commissionRate',
+  url: 'url',
+  imageUrl: 'imageUrl',
+  category: 'category',
+  rating: 'rating',
+  soldCount: 'soldCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const ContentScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  channel: 'channel',
+  status: 'status',
+  externalUrl: 'externalUrl',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ContentScalarFieldEnum = (typeof ContentScalarFieldEnum)[keyof typeof ContentScalarFieldEnum]
+
+
+export const AffiliateLinkScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  contentId: 'contentId',
+  subId: 'subId',
+  trackingUrl: 'trackingUrl',
+  createdAt: 'createdAt'
+} as const
+
+export type AffiliateLinkScalarFieldEnum = (typeof AffiliateLinkScalarFieldEnum)[keyof typeof AffiliateLinkScalarFieldEnum]
+
+
+export const CommissionScalarFieldEnum = {
+  id: 'id',
+  platformId: 'platformId',
+  linkId: 'linkId',
+  orderExternalId: 'orderExternalId',
+  productExternalId: 'productExternalId',
+  status: 'status',
+  amount: 'amount',
+  orderAmount: 'orderAmount',
+  orderedAt: 'orderedAt',
+  settledAt: 'settledAt',
+  raw: 'raw'
+} as const
+
+export type CommissionScalarFieldEnum = (typeof CommissionScalarFieldEnum)[keyof typeof CommissionScalarFieldEnum]
+
+
+export const SyncRunScalarFieldEnum = {
+  id: 'id',
+  platformId: 'platformId',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  status: 'status',
+  recordsUpserted: 'recordsUpserted',
+  error: 'error'
+} as const
+
+export type SyncRunScalarFieldEnum = (typeof SyncRunScalarFieldEnum)[keyof typeof SyncRunScalarFieldEnum]
+
+
+export const SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+} as const
+
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

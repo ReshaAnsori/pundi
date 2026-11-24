@@ -7,6 +7,10 @@ import { AppService } from './app.service.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { ApiKeyGuard } from './common/guards/api-key.guard.js';
 import { HealthModule } from './health/health.module.js';
+import { PlatformsModule } from './platforms/platforms.module.js';
+import { ProductsModule } from './products/products.module.js';
+import { ContentsModule } from './contents/contents.module.js';
+import { LinksModule } from './links/links.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -22,6 +26,10 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     }),
     PrismaModule,
     HealthModule,
+    PlatformsModule,
+    ProductsModule,
+    ContentsModule,
+    LinksModule,
   ],
   controllers: [AppController],
   providers: [
