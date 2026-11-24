@@ -162,10 +162,10 @@ Tabel tambahan di fase lanjut: `AdCampaign`, `BudgetRule`, `SpendLog`, `ProductS
 
 ### Fase 3 — Dashboard
 **Tujuan:** satu tampilan untuk memantau semuanya.
-- [ ] Endpoint agregasi: total komisi pending vs valid, per platform, per produk, per konten, per periode
-- [ ] Putuskan frontend (Flutter Web vs React) dan buat skeleton
-- [ ] Halaman: Ringkasan, Komisi, Produk, Konten & Link, Riwayat Sync
-- [ ] Import/ekspor CSV
+- [x] Endpoint agregasi: total komisi pending vs valid, per platform, per produk, per konten, per periode
+- [x] Putuskan frontend (Bootstrap 5.3 responsive dark/light SPA di `/app`)
+- [x] Halaman: Ringkasan, Komisi, Produk, Konten & Link, Riwayat Sync
+- [x] Import/ekspor CSV
 
 **Selesai bila:** bisa menjawab "konten mana yang paling menghasilkan minggu ini?" hanya dari dashboard.
 

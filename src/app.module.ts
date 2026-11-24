@@ -13,6 +13,8 @@ import { ContentsModule } from './contents/contents.module.js';
 import { LinksModule } from './links/links.module.js';
 import { SyncModule } from './sync/sync.module.js';
 import { CommissionsModule } from './commissions/commissions.module.js';
+import { DashboardModule } from './dashboard/dashboard.module.js';
+import { UiModule } from './ui/ui.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -34,6 +36,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     LinksModule,
     SyncModule,
     CommissionsModule,
+    DashboardModule,
+    UiModule,
   ],
   controllers: [AppController],
   providers: [

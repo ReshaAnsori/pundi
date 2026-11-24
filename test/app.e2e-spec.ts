@@ -290,4 +290,63 @@ ${orderExternalId},ITEM_${uniqueSuffix},${generatedSubId},Rp 15.000,Rp 150.000,S
       expect(summaryRes.body.totalOrderAmount).toBeGreaterThanOrEqual(150000);
     });
   });
+
+  describe('Dashboard Aggregations (Fase 3)', () => {
+    it('GET /dashboard/summary should return total metrics and platform breakdown', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/dashboard/summary')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(res.body.totalValid).toBeGreaterThanOrEqual(15000);
+      expect(Array.isArray(res.body.platforms)).toBe(true);
+      expect(res.body.platforms.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('GET /dashboard/top-contents should return top earning contents', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/dashboard/top-contents?period=7d')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBeGreaterThanOrEqual(1);
+      const top = res.body[0];
+      expect(top.contentId).toBeDefined();
+      expect(top.title).toBeDefined();
+      expect(top.validCommission).toBeGreaterThanOrEqual(15000);
+    });
+
+    it('GET /dashboard/top-products should return top earning products', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/dashboard/top-products')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBeGreaterThanOrEqual(1);
+      expect(res.body[0].productId).toBeDefined();
+      expect(res.body[0].validCommission).toBeGreaterThanOrEqual(15000);
+    });
+
+    it('GET /dashboard/recent-activity should return recent syncs and commissions', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/dashboard/recent-activity')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(Array.isArray(res.body.recentSyncs)).toBe(true);
+      expect(Array.isArray(res.body.recentCommissions)).toBe(true);
+    });
+
+    it('GET /app should serve the Bootstrap dashboard HTML without requiring API key', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/app')
+        .expect(200);
+
+      expect(res.headers['content-type']).toContain('text/html');
+      expect(res.text).toContain('Pundi — Affiliate Dashboard');
+      expect(res.text).toContain('bootstrap');
+    });
+  });
 });

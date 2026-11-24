@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pundi — Affiliate Dashboard</title>
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    body { min-height: 100vh; background-color: #0f172a; color: #f8fafc; }
+    .card { background-color: #1e293b; border-color: #334155; }
+    .table-dark { --bs-table-bg: #1e293b; --bs-table-border-color: #334155; }
+    .nav-pills .nav-link.active { background-color: #3b82f6; }
+    .nav-pills .nav-link { color: #94a3b8; }
+    .nav-pills .nav-link:hover { color: #f8fafc; }
+    .kpi-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+    .badge-valid { background-color: #059669; }
+    .badge-pending { background-color: #d97706; }
+    .badge-cancelled { background-color: #dc2626; }
+    .badge-channel { font-weight: 500; font-size: 0.75rem; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg border-bottom border-secondary-subtle bg-dark px-3 py-2 sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold text-primary d-flex align-items-center gap-2" href="#">
+        <i class="bi bi-wallet2 fs-4"></i> Pundi
+      </a>
+      <div class="d-flex align-items-center gap-3">
+        <span class="badge text-bg-secondary" id="dbStatusBadge">
+          <i class="bi bi-circle-fill text-success me-1" style="font-size: 8px;"></i> Online
+        </span>
+        <button class="btn btn-sm btn-outline-light d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#apiKeyModal">
+          <i class="bi bi-key"></i> <span id="apiKeyDisplay">API Key</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid py-4 px-lg-4">
+    <div class="row g-4">
+      <!-- Sidebar Nav -->
+      <div class="col-lg-2">
+        <div class="nav flex-column nav-pills gap-1" id="v-pills-tab" role="tablist">
+          <button class="nav-link active text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-summary" type="button">
+            <i class="bi bi-speedometer2 me-2"></i> Ringkasan
+          </button>
+          <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-commissions" type="button" onclick="loadCommissions()">
+            <i class="bi bi-cash-stack me-2"></i> Komisi
+          </button>
+          <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-products" type="button" onclick="loadProducts()">
+            <i class="bi bi-box-seam me-2"></i> Produk
+          </button>
+          <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-contents" type="button" onclick="loadContents()">
+            <i class="bi bi-camera-video me-2"></i> Konten & Link
+          </button>
+          <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-sync" type="button" onclick="loadSyncRuns()">
+            <i class="bi bi-arrow-repeat me-2"></i> Sync & Impor CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Content Tabs -->
+      <div class="col-lg-10">
+        <div class="tab-content">
+          
+          <!-- TAB 1: RINGKASAN -->
+          <div class="tab-pane fade show active" id="tab-summary">
+            <!-- Period filter -->
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+              <div>
+                <h4 class="fw-bold mb-0">Ringkasan Performa</h4>
+                <p class="text-secondary small mb-0">Pantau komisi, produk unggulan, dan konten terbaik</p>
+              </div>
+              <div class="btn-group" role="group" id="periodBtnGroup">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="changePeriod('today')">Hari Ini</button>
+                <button type="button" class="btn btn-sm btn-primary active" onclick="changePeriod('7d')">7 Hari</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="changePeriod('30d')">30 Hari</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="changePeriod('all')">Semua</button>
+              </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="row g-3 mb-4">
+              <div class="col-sm-6 col-xl-3">
+                <div class="card p-3 shadow-sm h-100">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="text-secondary small">Komisi Valid</span>
+                      <h4 class="fw-bold text-success mt-1 mb-0" id="cardValid">Rp 0</h4>
+                    </div>
+                    <div class="kpi-icon bg-success-subtle text-success"><i class="bi bi-check-circle"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3">
+                <div class="card p-3 shadow-sm h-100">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="text-secondary small">Komisi Pending</span>
+                      <h4 class="fw-bold text-warning mt-1 mb-0" id="cardPending">Rp 0</h4>
+                    </div>
+                    <div class="kpi-icon bg-warning-subtle text-warning"><i class="bi bi-hourglass-split"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3">
+                <div class="card p-3 shadow-sm h-100">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="text-secondary small">Total Nilai Pesanan</span>
+                      <h4 class="fw-bold text-info mt-1 mb-0" id="cardGmv">Rp 0</h4>
+                    </div>
+                    <div class="kpi-icon bg-info-subtle text-info"><i class="bi bi-bag-check"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3">
+                <div class="card p-3 shadow-sm h-100">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="text-secondary small">Total Pesanan Komisi</span>
+                      <h4 class="fw-bold text-light mt-1 mb-0" id="cardCount">0</h4>
+                    </div>
+                    <div class="kpi-icon bg-primary-subtle text-primary"><i class="bi bi-receipt"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top Contents (Core question of Fase 3) -->
+            <div class="row g-4 mb-4">
+              <div class="col-lg-8">
+                <div class="card p-3 shadow-sm h-100">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                      <h6 class="fw-bold mb-0"><i class="bi bi-trophy text-warning me-2"></i>Konten Paling Menghasilkan</h6>
+                      <small class="text-secondary">Peringkat konten berdasarkan komisi affiliate</small>
+                    </div>
+                    <span class="badge text-bg-primary" id="topContentsPeriodBadge">7 Hari</span>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                      <thead>
+                        <tr class="text-secondary small">
+                          <th>#</th>
+                          <th>Judul Konten</th>
+                          <th>Channel</th>
+                          <th class="text-end">Komisi Valid</th>
+                          <th class="text-end">Komisi Pending</th>
+                          <th class="text-end">Orders</th>
+                        </tr>
+                      </thead>
+                      <tbody id="topContentsTableBody">
+                        <tr><td colspan="6" class="text-center text-secondary py-3">Memuat data...</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Platform Breakdown -->
+              <div class="col-lg-4">
+                <div class="card p-3 shadow-sm h-100">
+                  <h6 class="fw-bold mb-3"><i class="bi bi-pie-chart text-info me-2"></i>Per Platform</h6>
+                  <div id="platformsBreakdownList" class="d-flex flex-column gap-3">
+                    <span class="text-secondary small">Memuat...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top Products -->
+            <div class="card p-3 shadow-sm">
+              <h6 class="fw-bold mb-3"><i class="bi bi-star text-warning me-2"></i>Produk Paling Menghasilkan</h6>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                  <thead>
+                    <tr class="text-secondary small">
+                      <th>#</th>
+                      <th>Nama Produk</th>
+                      <th>Platform</th>
+                      <th class="text-end">Komisi Valid</th>
+                      <th class="text-end">Total Komisi</th>
+                      <th class="text-end">Orders</th>
+                    </tr>
+                  </thead>
+                  <tbody id="topProductsTableBody">
+                    <tr><td colspan="6" class="text-center text-secondary py-3">Memuat data...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: KOMISI -->
+          <div class="tab-pane fade" id="tab-commissions">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div>
+                <h4 class="fw-bold mb-0">Daftar Komisi</h4>
+                <p class="text-secondary small mb-0">Riwayat transaksi komisi dari platform</p>
+              </div>
+              <div class="d-flex gap-2">
+                <select class="form-select form-select-sm" id="commissionStatusFilter" onchange="loadCommissions()" style="width: 140px;">
+                  <option value="">Semua Status</option>
+                  <option value="valid">Valid / Sah</option>
+                  <option value="pending">Pending</option>
+                  <option value="cancelled">Batal</option>
+                </select>
+                <button class="btn btn-sm btn-outline-light" onclick="loadCommissions()"><i class="bi bi-arrow-clockwise"></i></button>
+              </div>
+            </div>
+
+            <div class="card p-3 shadow-sm">
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                  <thead>
+                    <tr class="text-secondary small">
+                      <th>Order ID</th>
+                      <th>Waktu</th>
+                      <th>Platform</th>
+                      <th>Produk</th>
+                      <th>subId / Konten</th>
+                      <th class="text-end">Nilai Pesanan</th>
+                      <th class="text-end">Komisi</th>
+                      <th class="text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="commissionsTableBody">
+                    <tr><td colspan="8" class="text-center text-secondary py-3">Memuat...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: PRODUK -->
+          <div class="tab-pane fade" id="tab-products">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div>
+                <h4 class="fw-bold mb-0">Katalog Produk</h4>
+                <p class="text-secondary small mb-0">Kelola produk affiliate yang dipromosikan</p>
+              </div>
+              <button class="btn btn-sm btn-primary d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                <i class="bi bi-plus-lg"></i> Tambah Produk
+              </button>
+            </div>
+
+            <div class="card p-3 shadow-sm">
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                  <thead>
+                    <tr class="text-secondary small">
+                      <th>ID</th>
+                      <th>Platform</th>
+                      <th>Nama Produk</th>
+                      <th>Kategori</th>
+                      <th class="text-end">Harga</th>
+                      <th class="text-end">Komisi %</th>
+                      <th class="text-center">Link Toko</th>
+                    </tr>
+                  </thead>
+                  <tbody id="productsTableBody">
+                    <tr><td colspan="7" class="text-center text-secondary py-3">Memuat...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: KONTEN & LINK -->
+          <div class="tab-pane fade" id="tab-contents">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div>
+                <h4 class="fw-bold mb-0">Konten & Affiliate Links</h4>
+                <p class="text-secondary small mb-0">Hubungkan konten promosi dengan link affiliate ber-subId unik</p>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#addContentModal">
+                  <i class="bi bi-file-plus"></i> Buat Konten
+                </button>
+                <button class="btn btn-sm btn-primary d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#createLinkModal" onclick="populateLinkModalDropdowns()">
+                  <i class="bi bi-link-45deg"></i> Generate Link
+                </button>
+              </div>
+            </div>
+
+            <div class="card p-3 shadow-sm">
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                  <thead>
+                    <tr class="text-secondary small">
+                      <th>Judul Konten</th>
+                      <th>Channel</th>
+                      <th>Status</th>
+                      <th>Links Terpasang (subId & Produk)</th>
+                      <th class="text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="contentsTableBody">
+                    <tr><td colspan="5" class="text-center text-secondary py-3">Memuat...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 5: SYNC & IMPOR CSV -->
+          <div class="tab-pane fade" id="tab-sync">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div>
+                <h4 class="fw-bold mb-0">Sinkronisasi & Impor CSV</h4>
+                <p class="text-secondary small mb-0">Tarik otomatis komisi via API platform atau paste file CSV ekspor</p>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-warning" onclick="triggerSync('shopee')">
+                  <i class="bi bi-cloud-arrow-down me-1"></i> Sync Shopee
+                </button>
+                <button class="btn btn-sm btn-outline-info" onclick="triggerSync('tiktok')">
+                  <i class="bi bi-cloud-arrow-down me-1"></i> Sync TikTok
+                </button>
+              </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+              <!-- CSV Importer Box -->
+              <div class="col-lg-6">
+                <div class="card p-3 shadow-sm h-100">
+                  <h6 class="fw-bold mb-2"><i class="bi bi-filetype-csv text-success me-2"></i>Impor CSV Laporan Komisi</h6>
+                  <p class="text-secondary small mb-3">Paste isi file CSV ekspor dari dashboard Shopee Affiliate atau TikTok Creator Center</p>
+                  
+                  <div class="mb-3">
+                    <label class="form-label small text-secondary">Pilih Platform</label>
+                    <select class="form-select form-select-sm" id="csvPlatformSelect">
+                      <option value="shopee">Shopee Affiliate</option>
+                      <option value="tiktok">TikTok Shop Creator</option>
+                    </select>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label small text-secondary">Isi File CSV</label>
+                    <textarea class="form-control font-monospace small" id="csvTextInput" rows="6" placeholder="Paste baris CSV di sini (misal: No. Pesanan, ID Produk, Sub ID, Estimasi Komisi...)"></textarea>
+                  </div>
+
+                  <button class="btn btn-success btn-sm w-100" onclick="submitCsvImport()">
+                    <i class="bi bi-upload me-1"></i> Proses Impor CSV
+                  </button>
+                </div>
+              </div>
+
+              <!-- Sync Instructions -->
+              <div class="col-lg-6">
+                <div class="card p-3 shadow-sm h-100">
+                  <h6 class="fw-bold mb-2"><i class="bi bi-info-circle text-primary me-2"></i>Panduan Ekspor Platform</h6>
+                  <div class="small text-secondary lh-lg">
+                    <p class="mb-2"><strong>Shopee Affiliate:</strong> Masuk ke <em>Shopee Affiliate Center &gt; Laporan Konversi &gt; Ekspor CSV</em>. File berisi nomor pesanan, sub ID, dan nominal komisi.</p>
+                    <p class="mb-2"><strong>TikTok Shop:</strong> Masuk ke <em>TikTok Shop Creator Center &gt; Data Komisi &gt; Export</em>. File memuat status settled dan nilai pesanan.</p>
+                    <p class="mb-0"><strong>Idempotensi Terjamin:</strong> Sistem mendeteksi ID pesanan dan produk secara unik. Mengunggah file yang sama berkali-kali aman dan tidak akan menghasilkan komisi ganda.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sync Runs Log -->
+            <div class="card p-3 shadow-sm">
+              <h6 class="fw-bold mb-3"><i class="bi bi-clock-history me-2"></i>Riwayat Eksekusi Sinkronisasi (SyncRun)</h6>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                  <thead>
+                    <tr class="text-secondary small">
+                      <th>ID</th>
+                      <th>Waktu Mulai</th>
+                      <th>Platform</th>
+                      <th>Status</th>
+                      <th class="text-end">Records Upserted</th>
+                      <th>Keterangan / Error</th>
+                    </tr>
+                  </thead>
+                  <tbody id="syncRunsTableBody">
+                    <tr><td colspan="6" class="text-center text-secondary py-3">Memuat...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <!-- API Key Modal -->
+  <div class="modal fade" id="apiKeyModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark border-secondary">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title">Konfigurasi API Key</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="small text-secondary">Semua request ke API backend Pundi dilindungi oleh API Key single-user.</p>
+          <div class="mb-3">
+            <label class="form-label small">API Key</label>
+            <input type="text" class="form-control" id="apiKeyInput" value="pundi-secret-api-key">
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-primary btn-sm" onclick="saveApiKey()">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Product Modal -->
+  <div class="modal fade" id="addProductModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark border-secondary">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title">Tambah Produk Baru</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2">
+            <label class="form-label small">Platform</label>
+            <select class="form-select form-select-sm" id="modalProductPlatform"></select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">ID Produk Eksternal (Item ID di Shopee/TikTok)</label>
+            <input type="text" class="form-control form-control-sm" id="modalProductExternalId" placeholder="misal: 12345678">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">Nama Produk</label>
+            <input type="text" class="form-control form-control-sm" id="modalProductName" placeholder="misal: Botol Minum 2L">
+          </div>
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <label class="form-label small">Harga (Rupiah)</label>
+              <input type="number" class="form-control form-control-sm" id="modalProductPrice" placeholder="50000">
+            </div>
+            <div class="col-6">
+              <label class="form-label small">Komisi (%)</label>
+              <input type="number" step="0.1" class="form-control form-control-sm" id="modalProductCommissionRate" placeholder="10">
+            </div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">URL Produk</label>
+            <input type="url" class="form-control form-control-sm" id="modalProductUrl" placeholder="https://shopee.co.id/product/...">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">Kategori</label>
+            <input type="text" class="form-control form-control-sm" id="modalProductCategory" placeholder="Home & Living">
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="submitAddProduct()">Simpan Produk</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Content Modal -->
+  <div class="modal fade" id="addContentModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark border-secondary">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title">Buat Konten Baru</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2">
+            <label class="form-label small">Judul Konten / Post</label>
+            <input type="text" class="form-control form-control-sm" id="modalContentTitle" placeholder="misal: Review Termos Anti Tumpah">
+          </div>
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <label class="form-label small">Channel</label>
+              <select class="form-select form-select-sm" id="modalContentChannel">
+                <option value="tiktok">TikTok</option>
+                <option value="instagram">Instagram</option>
+                <option value="youtube">YouTube</option>
+                <option value="facebook">Facebook</option>
+                <option value="other">Lainnya</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small">Status</label>
+              <select class="form-select form-select-sm" id="modalContentStatus">
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">URL Video / Post (Opsional)</label>
+            <input type="url" class="form-control form-control-sm" id="modalContentUrl" placeholder="https://tiktok.com/@user/video/...">
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="submitAddContent()">Simpan Konten</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Link Modal -->
+  <div class="modal fade" id="createLinkModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark border-secondary">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title">Generate Link Affiliate</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2">
+            <label class="form-label small">Pilih Produk</label>
+            <select class="form-select form-select-sm" id="modalLinkProductSelect"></select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">Pilih Konten Tertaut</label>
+            <select class="form-select form-select-sm" id="modalLinkContentSelect"></select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">Kustom subId (Opsional, kosongkan untuk otomatis)</label>
+            <input type="text" class="form-control form-control-sm" id="modalLinkCustomSubId" placeholder="misal: c1_p2_custom">
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="submitCreateLink()">Generate Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5.3 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // State
+    let apiKey = localStorage.getItem('pundi_api_key') || 'pundi-secret-api-key';
+    let currentPeriod = '7d';
+    let cachedPlatforms = [];
+    let cachedProducts = [];
+    let cachedContents = [];
+
+    document.getElementById('apiKeyInput').value = apiKey;
+    updateApiKeyDisplay();
+
+    function updateApiKeyDisplay() {
+      const display = document.getElementById('apiKeyDisplay');
+      if (apiKey) {
+        display.textContent = apiKey.substring(0, 6) + '...';
+      }
+    }
+
+    function saveApiKey() {
+      const val = document.getElementById('apiKeyInput').value.trim();
+      if (val) {
+        apiKey = val;
+        localStorage.setItem('pundi_api_key', apiKey);
+        updateApiKeyDisplay();
+        bootstrap.Modal.getInstance(document.getElementById('apiKeyModal')).hide();
+        loadDashboard();
+      }
+    }
+
+    function formatRupiah(num) {
+      if (!num) return 'Rp 0';
+      return 'Rp ' + Number(num).toLocaleString('id-ID');
+    }
+
+    async function apiFetch(endpoint, options = {}) {
+      const headers = {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        ...(options.headers || {})
+      };
+      try {
+        const res = await fetch(endpoint, { ...options, headers });
+        if (res.status === 401) {
+          alert('API Key tidak valid atau belum diisi. Silakan sesuaikan di tombol API Key.');
+          return null;
+        }
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.message || 'Error: ' + res.statusText);
+        }
+        return await res.json();
+      } catch (err) {
+        console.error('API call failed:', err);
+        alert(err.message);
+        return null;
+      }
+    }
+
+    // Tab 1: Dashboard Summary
+    async function loadDashboard() {
+      const summary = await apiFetch(`/dashboard/summary?period=${currentPeriod}`);
+      if (summary) {
+        document.getElementById('cardValid').textContent = formatRupiah(summary.totalValid);
+        document.getElementById('cardPending').textContent = formatRupiah(summary.totalPending);
+        document.getElementById('cardGmv').textContent = formatRupiah(summary.totalOrderAmount);
+        document.getElementById('cardCount').textContent = summary.totalCount;
+
+        // Platform breakdown
+        const list = document.getElementById('platformsBreakdownList');
+        list.innerHTML = '';
+        if (summary.platforms && summary.platforms.length > 0) {
+          summary.platforms.forEach(p => {
+            list.innerHTML += `
+              <div class="border border-secondary-subtle rounded p-2">
+                <div class="d-flex justify-content-between">
+                  <span class="fw-bold text-light">${p.platformName}</span>
+                  <span class="badge text-bg-secondary">${p.orderCount} orders</span>
+                </div>
+                <div class="d-flex justify-content-between mt-2 small">
+                  <span class="text-secondary">Valid: <strong class="text-success">${formatRupiah(p.validAmount)}</strong></span>
+                  <span class="text-secondary">Pending: <strong class="text-warning">${formatRupiah(p.pendingAmount)}</strong></span>
+                </div>
+              </div>
+            `;
+          });
+        } else {
+          list.innerHTML = '<span class="text-secondary small">Belum ada data komisi</span>';
+        }
+      }
+
+      // Top Contents
+      const topContents = await apiFetch(`/dashboard/top-contents?period=${currentPeriod}`);
+      const cBody = document.getElementById('topContentsTableBody');
+      cBody.innerHTML = '';
+      if (topContents && topContents.length > 0) {
+        topContents.forEach((c, idx) => {
+          cBody.innerHTML += `
+            <tr>
+              <td class="fw-bold text-secondary">${idx + 1}</td>
+              <td class="fw-bold text-light">${c.title}</td>
+              <td><span class="badge text-bg-primary badge-channel">${c.channel}</span></td>
+              <td class="text-end text-success fw-bold">${formatRupiah(c.validCommission)}</td>
+              <td class="text-end text-warning">${formatRupiah(c.pendingCommission)}</td>
+              <td class="text-end text-secondary">${c.orderCount}</td>
+            </tr>
+          `;
+        });
+      } else {
+        cBody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary py-3">Belum ada konten menghasilkan pada periode ini</td></tr>';
+      }
+
+      // Top Products
+      const topProducts = await apiFetch(`/dashboard/top-products?period=${currentPeriod}`);
+      const pBody = document.getElementById('topProductsTableBody');
+      pBody.innerHTML = '';
+      if (topProducts && topProducts.length > 0) {
+        topProducts.forEach((p, idx) => {
+          pBody.innerHTML += `
+            <tr>
+              <td class="fw-bold text-secondary">${idx + 1}</td>
+              <td class="fw-bold text-light">${p.productName}</td>
+              <td><span class="badge text-bg-secondary">${p.platformName}</span></td>
+              <td class="text-end text-success fw-bold">${formatRupiah(p.validCommission)}</td>
+              <td class="text-end text-light">${formatRupiah(p.totalCommission)}</td>
+              <td class="text-end text-secondary">${p.orderCount}</td>
+            </tr>
+          `;
+        });
+      } else {
+        pBody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary py-3">Belum ada produk menghasilkan</td></tr>';
+      }
+    }
+
+    function changePeriod(p) {
+      currentPeriod = p;
+      const btns = document.querySelectorAll('#periodBtnGroup button');
+      btns.forEach(b => b.classList.remove('active', 'btn-primary'));
+      btns.forEach(b => b.classList.add('btn-outline-secondary'));
+      event.target.classList.remove('btn-outline-secondary');
+      event.target.classList.add('btn-primary', 'active');
+      document.getElementById('topContentsPeriodBadge').textContent = p === 'today' ? 'Hari Ini' : (p === '7d' ? '7 Hari' : (p === '30d' ? '30 Hari' : 'Semua'));
+      loadDashboard();
+    }
+
+    // Tab 2: Commissions
+    async function loadCommissions() {
+      const status = document.getElementById('commissionStatusFilter').value;
+      const url = status ? `/commissions?status=${status}` : '/commissions';
+      const commissions = await apiFetch(url);
+      const tbody = document.getElementById('commissionsTableBody');
+      tbody.innerHTML = '';
+
+      if (commissions && commissions.length > 0) {
+        commissions.forEach(c => {
+          const badgeClass = c.status === 'valid' ? 'badge-valid' : (c.status === 'cancelled' ? 'badge-cancelled' : 'badge-pending');
+          const time = new Date(c.orderedAt).toLocaleString('id-ID');
+          const product = c.link?.product?.name || c.productExternalId || '-';
+          const subId = c.link?.subId || '-';
+          tbody.innerHTML += `
+            <tr>
+              <td class="font-monospace small text-secondary">${c.orderExternalId}</td>
+              <td class="small text-secondary">${time}</td>
+              <td><span class="badge text-bg-secondary">${c.platform?.name || '-'}</span></td>
+              <td class="fw-medium text-light">${product}</td>
+              <td><code class="small text-info">${subId}</code></td>
+              <td class="text-end text-secondary">${formatRupiah(c.orderAmount)}</td>
+              <td class="text-end fw-bold text-success">${formatRupiah(c.amount)}</td>
+              <td class="text-center"><span class="badge ${badgeClass}">${c.status}</span></td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-secondary py-3">Tidak ada data komisi</td></tr>';
+      }
+    }
+
+    // Tab 3: Products
+    async function loadProducts() {
+      const products = await apiFetch('/products');
+      cachedProducts = products || [];
+      const tbody = document.getElementById('productsTableBody');
+      tbody.innerHTML = '';
+
+      if (products && products.length > 0) {
+        products.forEach(p => {
+          const urlLink = p.url ? `<a href="${p.url}" target="_blank" class="btn btn-sm btn-outline-info py-0"><i class="bi bi-box-arrow-up-right"></i></a>` : '-';
+          tbody.innerHTML += `
+            <tr>
+              <td class="text-secondary">${p.id}</td>
+              <td><span class="badge text-bg-secondary">${p.platform?.name || '-'}</span></td>
+              <td class="fw-bold text-light">${p.name}</td>
+              <td><span class="badge text-bg-dark border border-secondary">${p.category || '-'}</span></td>
+              <td class="text-end text-light">${formatRupiah(p.price)}</td>
+              <td class="text-end text-info">${p.commissionRate ? p.commissionRate + '%' : '-'}</td>
+              <td class="text-center">${urlLink}</td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-secondary py-3">Belum ada produk</td></tr>';
+      }
+    }
+
+    async function loadPlatforms() {
+      const platforms = await apiFetch('/platforms');
+      cachedPlatforms = platforms || [];
+      const select = document.getElementById('modalProductPlatform');
+      select.innerHTML = '';
+      cachedPlatforms.forEach(p => {
+        select.innerHTML += `<option value="${p.id}">${p.name} (${p.code})</option>`;
+      });
+    }
+
+    async function submitAddProduct() {
+      const platformId = parseInt(document.getElementById('modalProductPlatform').value);
+      const externalId = document.getElementById('modalProductExternalId').value.trim();
+      const name = document.getElementById('modalProductName').value.trim();
+      const price = document.getElementById('modalProductPrice').value ? parseInt(document.getElementById('modalProductPrice').value) : undefined;
+      const commissionRate = document.getElementById('modalProductCommissionRate').value ? parseFloat(document.getElementById('modalProductCommissionRate').value) : undefined;
+      const url = document.getElementById('modalProductUrl').value.trim() || undefined;
+      const category = document.getElementById('modalProductCategory').value.trim() || undefined;
+
+      if (!externalId || !name) {
+        alert('Harap isi External ID dan Nama Produk.');
+        return;
+      }
+
+      const res = await apiFetch('/products', {
+        method: 'POST',
+        body: JSON.stringify({ platformId, externalId, name, price, commissionRate, url, category })
+      });
+
+      if (res) {
+        bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
+        loadProducts();
+      }
+    }
+
+    // Tab 4: Contents & Links
+    async function loadContents() {
+      const contents = await apiFetch('/contents');
+      cachedContents = contents || [];
+      const tbody = document.getElementById('contentsTableBody');
+      tbody.innerHTML = '';
+
+      if (contents && contents.length > 0) {
+        contents.forEach(c => {
+          const linksHtml = c.links && c.links.length > 0 ? c.links.map(l => `
+            <div class="d-flex align-items-center justify-content-between bg-dark border border-secondary rounded p-1 mb-1">
+              <div>
+                <code class="text-info small me-2">${l.subId}</code>
+                <span class="small text-light">${l.product?.name || 'Produk #' + l.productId}</span>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="navigator.clipboard.writeText('${l.trackingUrl}'); alert('Link disalin: ' + '${l.trackingUrl}')">
+                <i class="bi bi-clipboard"></i>
+              </button>
+            </div>
+          `).join('') : '<span class="text-secondary small">Belum ada link terpasang</span>';
+
+          tbody.innerHTML += `
+            <tr>
+              <td class="fw-bold text-light">${c.title}</td>
+              <td><span class="badge text-bg-primary badge-channel">${c.channel}</span></td>
+              <td><span class="badge text-bg-${c.status === 'published' ? 'success' : 'secondary'}">${c.status}</span></td>
+              <td>${linksHtml}</td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-info" onclick="openLinkModalForContent(${c.id})">
+                  <i class="bi bi-link-45deg"></i> Pasang Link
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-secondary py-3">Belum ada konten</td></tr>';
+      }
+    }
+
+    async function submitAddContent() {
+      const title = document.getElementById('modalContentTitle').value.trim();
+      const channel = document.getElementById('modalContentChannel').value;
+      const status = document.getElementById('modalContentStatus').value;
+      const externalUrl = document.getElementById('modalContentUrl').value.trim() || undefined;
+
+      if (!title) {
+        alert('Harap isi judul konten');
+        return;
+      }
+
+      const res = await apiFetch('/contents', {
+        method: 'POST',
+        body: JSON.stringify({ title, channel, status, externalUrl })
+      });
+
+      if (res) {
+        bootstrap.Modal.getInstance(document.getElementById('addContentModal')).hide();
+        loadContents();
+      }
+    }
+
+    async function populateLinkModalDropdowns() {
+      await Promise.all([loadProducts(), loadContents()]);
+      const pSelect = document.getElementById('modalLinkProductSelect');
+      const cSelect = document.getElementById('modalLinkContentSelect');
+      pSelect.innerHTML = '';
+      cSelect.innerHTML = '<option value="">-- Tanpa Konten Khusus --</option>';
+
+      cachedProducts.forEach(p => {
+        pSelect.innerHTML += `<option value="${p.id}">${p.name} (${p.platform?.code})</option>`;
+      });
+
+      cachedContents.forEach(c => {
+        cSelect.innerHTML += `<option value="${c.id}">${c.title} [${c.channel}]</option>`;
+      });
+    }
+
+    function openLinkModalForContent(contentId) {
+      populateLinkModalDropdowns().then(() => {
+        document.getElementById('modalLinkContentSelect').value = contentId;
+        new bootstrap.Modal(document.getElementById('createLinkModal')).show();
+      });
+    }
+
+    async function submitCreateLink() {
+      const productId = parseInt(document.getElementById('modalLinkProductSelect').value);
+      const contentIdVal = document.getElementById('modalLinkContentSelect').value;
+      const contentId = contentIdVal ? parseInt(contentIdVal) : undefined;
+      const customSubId = document.getElementById('modalLinkCustomSubId').value.trim() || undefined;
+
+      const res = await apiFetch('/links', {
+        method: 'POST',
+        body: JSON.stringify({ productId, contentId, customSubId })
+      });
+
+      if (res) {
+        alert(`Affiliate link berhasil dibuat!\nsubId: ${res.subId}\nTracking URL: ${res.trackingUrl}`);
+        bootstrap.Modal.getInstance(document.getElementById('createLinkModal')).hide();
+        loadContents();
+      }
+    }
+
+    // Tab 5: Sync & CSV
+    async function loadSyncRuns() {
+      const runs = await apiFetch('/sync/runs');
+      const tbody = document.getElementById('syncRunsTableBody');
+      tbody.innerHTML = '';
+
+      if (runs && runs.length > 0) {
+        runs.forEach(r => {
+          const time = new Date(r.startedAt).toLocaleString('id-ID');
+          const badge = r.status === 'ok' ? 'badge-valid' : (r.status === 'failed' ? 'badge-cancelled' : 'badge-pending');
+          tbody.innerHTML += `
+            <tr>
+              <td class="text-secondary small">${r.id}</td>
+              <td class="small text-secondary">${time}</td>
+              <td><span class="badge text-bg-secondary">${r.platform?.name || '-'}</span></td>
+              <td><span class="badge ${badge}">${r.status}</span></td>
+              <td class="text-end fw-bold text-success">${r.recordsUpserted}</td>
+              <td class="small text-secondary">${r.error || '-'}</td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary py-3">Belum ada riwayat sync</td></tr>';
+      }
+    }
+
+    async function triggerSync(platform) {
+      const res = await apiFetch(`/sync/${platform}`, { method: 'POST' });
+      if (res) {
+        alert(`Sinkronisasi ${platform} selesai. Data di-upsert: ${res.recordsUpserted}`);
+        loadSyncRuns();
+        loadDashboard();
+      }
+    }
+
+    async function submitCsvImport() {
+      const platform = document.getElementById('csvPlatformSelect').value;
+      const csv = document.getElementById('csvTextInput').value.trim();
+
+      if (!csv) {
+        alert('Harap paste teks CSV laporan komisi');
+        return;
+      }
+
+      const res = await apiFetch(`/sync/${platform}/csv`, {
+        method: 'POST',
+        body: JSON.stringify({ csv })
+      });
+
+      if (res) {
+        alert(`Berhasil mengimpor CSV ${platform}!\nJumlah data di-upsert: ${res.recordsUpserted}`);
+        document.getElementById('csvTextInput').value = '';
+        loadSyncRuns();
+        loadDashboard();
+      }
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      loadPlatforms();
+      loadDashboard();
+    });
+  </script>
+</body>
+</html>
