@@ -1378,6 +1378,7 @@ export type ContentCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many Contents.
    */
   data: Prisma.ContentCreateManyInput | Prisma.ContentCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1396,6 +1397,7 @@ export type ContentCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many Contents.
    */
   data: Prisma.ContentCreateManyInput | Prisma.ContentCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

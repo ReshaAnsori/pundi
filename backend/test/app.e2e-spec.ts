@@ -353,12 +353,21 @@ ${orderExternalId},ITEM_${uniqueSuffix},${generatedSubId},Rp 15.000,Rp 150.000,S
   describe('Product Research (Fase 4)', () => {
     let testProductId: number;
 
-    beforeAll(async () => {
+    beforeEach(async () => {
       // Create a test product with good stats for scoring
+      let platId: number;
       const platRes = await request(app.getHttpServer())
         .get('/platforms')
         .set('x-api-key', apiKey);
-      const platId = platRes.body[0].id;
+      if (platRes.body && platRes.body.length > 0) {
+        platId = platRes.body[0].id;
+      } else {
+        const newPlat = await request(app.getHttpServer())
+          .post('/platforms')
+          .set('x-api-key', apiKey)
+          .send({ code: `plat_f4_${Date.now()}`, name: 'Platform F4' });
+        platId = newPlat.body.id;
+      }
 
       const pRes = await request(app.getHttpServer())
         .post('/products')

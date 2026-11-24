@@ -555,6 +555,7 @@ export type AffiliateLinkCreateOrConnectWithoutProductInput = {
 
 export type AffiliateLinkCreateManyProductInputEnvelope = {
   data: Prisma.AffiliateLinkCreateManyProductInput | Prisma.AffiliateLinkCreateManyProductInput[]
+  skipDuplicates?: boolean
 }
 
 export type AffiliateLinkUpsertWithWhereUniqueWithoutProductInput = {
@@ -611,6 +612,7 @@ export type AffiliateLinkCreateOrConnectWithoutContentInput = {
 
 export type AffiliateLinkCreateManyContentInputEnvelope = {
   data: Prisma.AffiliateLinkCreateManyContentInput | Prisma.AffiliateLinkCreateManyContentInput[]
+  skipDuplicates?: boolean
 }
 
 export type AffiliateLinkUpsertWithWhereUniqueWithoutContentInput = {
@@ -1591,6 +1593,7 @@ export type AffiliateLinkCreateManyArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many AffiliateLinks.
    */
   data: Prisma.AffiliateLinkCreateManyInput | Prisma.AffiliateLinkCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1609,6 +1612,7 @@ export type AffiliateLinkCreateManyAndReturnArgs<ExtArgs extends runtime.Types.E
    * The data used to create many AffiliateLinks.
    */
   data: Prisma.AffiliateLinkCreateManyInput | Prisma.AffiliateLinkCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

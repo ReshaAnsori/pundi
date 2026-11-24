@@ -522,6 +522,7 @@ export type PostingScheduleCreateOrConnectWithoutContentInput = {
 
 export type PostingScheduleCreateManyContentInputEnvelope = {
   data: Prisma.PostingScheduleCreateManyContentInput | Prisma.PostingScheduleCreateManyContentInput[]
+  skipDuplicates?: boolean
 }
 
 export type PostingScheduleUpsertWithWhereUniqueWithoutContentInput = {
@@ -1344,6 +1345,7 @@ export type PostingScheduleCreateManyArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many PostingSchedules.
    */
   data: Prisma.PostingScheduleCreateManyInput | Prisma.PostingScheduleCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1362,6 +1364,7 @@ export type PostingScheduleCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    * The data used to create many PostingSchedules.
    */
   data: Prisma.PostingScheduleCreateManyInput | Prisma.PostingScheduleCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

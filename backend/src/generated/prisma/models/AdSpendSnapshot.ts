@@ -408,6 +408,7 @@ export type AdSpendSnapshotCreateOrConnectWithoutCampaignInput = {
 
 export type AdSpendSnapshotCreateManyCampaignInputEnvelope = {
   data: Prisma.AdSpendSnapshotCreateManyCampaignInput | Prisma.AdSpendSnapshotCreateManyCampaignInput[]
+  skipDuplicates?: boolean
 }
 
 export type AdSpendSnapshotUpsertWithWhereUniqueWithoutCampaignInput = {
@@ -1175,6 +1176,7 @@ export type AdSpendSnapshotCreateManyArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many AdSpendSnapshots.
    */
   data: Prisma.AdSpendSnapshotCreateManyInput | Prisma.AdSpendSnapshotCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1193,6 +1195,7 @@ export type AdSpendSnapshotCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    * The data used to create many AdSpendSnapshots.
    */
   data: Prisma.AdSpendSnapshotCreateManyInput | Prisma.AdSpendSnapshotCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

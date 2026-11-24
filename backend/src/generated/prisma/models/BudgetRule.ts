@@ -1097,6 +1097,7 @@ export type BudgetRuleCreateManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * The data used to create many BudgetRules.
    */
   data: Prisma.BudgetRuleCreateManyInput | Prisma.BudgetRuleCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1115,6 +1116,7 @@ export type BudgetRuleCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exte
    * The data used to create many BudgetRules.
    */
   data: Prisma.BudgetRuleCreateManyInput | Prisma.BudgetRuleCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

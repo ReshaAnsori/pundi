@@ -480,6 +480,7 @@ export type SyncRunCreateOrConnectWithoutPlatformInput = {
 
 export type SyncRunCreateManyPlatformInputEnvelope = {
   data: Prisma.SyncRunCreateManyPlatformInput | Prisma.SyncRunCreateManyPlatformInput[]
+  skipDuplicates?: boolean
 }
 
 export type SyncRunUpsertWithWhereUniqueWithoutPlatformInput = {
@@ -1280,6 +1281,7 @@ export type SyncRunCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many SyncRuns.
    */
   data: Prisma.SyncRunCreateManyInput | Prisma.SyncRunCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1298,6 +1300,7 @@ export type SyncRunCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many SyncRuns.
    */
   data: Prisma.SyncRunCreateManyInput | Prisma.SyncRunCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

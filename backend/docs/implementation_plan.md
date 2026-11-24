@@ -213,12 +213,12 @@ Tabel tambahan di fase lanjut: `AdCampaign`, `BudgetRule`, `SpendLog`, `ProductS
 | Kebocoran kredensial platform | Simpan di `.env`, jangan commit, rotasi bila perlu |
 | Prisma versi berubah | Pin `prisma@7` dan `@prisma/client@7` |
 
-## 7. Keputusan Terbuka
+## 7. Status Keputusan Arsitektur
 
-1. Platform pertama untuk Fase 2: Shopee Affiliate atau TikTok Shop?
-2. Frontend: Flutter Web atau React/Next?
-3. Kapan pindah dari SQLite ke PostgreSQL (saat deploy ke server)?
-4. Tempat hosting (VPS kecil / lokal dulu)?
+1. Platform pertama untuk Fase 2: Shopee Affiliate & TikTok Shop (Keduanya didukung via Generic Adapter + CSV Fallback).
+2. Frontend: Bootstrap 5.3 Dark Single Page Application (disajikan langsung dari endpoint `/app`).
+3. Database: **Resmi dimigrasikan ke PostgreSQL** menggunakan `@prisma/adapter-pg` dan koneksi pool `pg`.
+4. Tempat hosting: VPS (Ubuntu 24.04 / Nginx / PM2) atau Cloud Managed PostgreSQL (Neon / Supabase).
 
 ## 8. Urutan Kerja yang Disarankan
 

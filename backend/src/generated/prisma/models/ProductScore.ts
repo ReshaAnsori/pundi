@@ -1265,6 +1265,7 @@ export type ProductScoreCreateManyArgs<ExtArgs extends runtime.Types.Extensions.
    * The data used to create many ProductScores.
    */
   data: Prisma.ProductScoreCreateManyInput | Prisma.ProductScoreCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1283,6 +1284,7 @@ export type ProductScoreCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * The data used to create many ProductScores.
    */
   data: Prisma.ProductScoreCreateManyInput | Prisma.ProductScoreCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

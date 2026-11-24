@@ -639,6 +639,7 @@ export type CommissionCreateOrConnectWithoutPlatformInput = {
 
 export type CommissionCreateManyPlatformInputEnvelope = {
   data: Prisma.CommissionCreateManyPlatformInput | Prisma.CommissionCreateManyPlatformInput[]
+  skipDuplicates?: boolean
 }
 
 export type CommissionUpsertWithWhereUniqueWithoutPlatformInput = {
@@ -706,6 +707,7 @@ export type CommissionCreateOrConnectWithoutLinkInput = {
 
 export type CommissionCreateManyLinkInputEnvelope = {
   data: Prisma.CommissionCreateManyLinkInput | Prisma.CommissionCreateManyLinkInput[]
+  skipDuplicates?: boolean
 }
 
 export type CommissionUpsertWithWhereUniqueWithoutLinkInput = {
@@ -1592,6 +1594,7 @@ export type CommissionCreateManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * The data used to create many Commissions.
    */
   data: Prisma.CommissionCreateManyInput | Prisma.CommissionCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1610,6 +1613,7 @@ export type CommissionCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exte
    * The data used to create many Commissions.
    */
   data: Prisma.CommissionCreateManyInput | Prisma.CommissionCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

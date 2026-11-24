@@ -1,23 +1,23 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
-import path from 'node:path';
+import { PrismaPg } from '@prisma/adapter-pg';
+import pg from 'pg';
 import { PrismaClient } from '../generated/prisma/client.js';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  private readonly pool: pg.Pool;
+
   constructor(private readonly configService: ConfigService) {
-    const rawUrl =
+    const connectionString =
       configService.get<string>('DATABASE_URL') ||
       process.env.DATABASE_URL ||
-      'file:./prisma/dev.db';
-    let dbPath = rawUrl.replace(/^file:/, '');
-    if (!path.isAbsolute(dbPath)) {
-      dbPath = path.resolve(process.cwd(), dbPath);
-    }
+      'postgresql://postgres:postgres@localhost:5432/pundi?schema=public';
 
-    const adapter = new PrismaBetterSqlite3({ url: `file:${dbPath}` });
+    const pool = new pg.Pool({ connectionString });
+    const adapter = new PrismaPg(pool);
     super({ adapter });
+    this.pool = pool;
   }
 
   async onModuleInit() {
@@ -26,5 +26,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
   async onModuleDestroy() {
     await this.$disconnect();
+    await this.pool.end();
   }
 }

@@ -1369,6 +1369,7 @@ export type PlatformCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * The data used to create many Platforms.
    */
   data: Prisma.PlatformCreateManyInput | Prisma.PlatformCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1387,6 +1388,7 @@ export type PlatformCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many Platforms.
    */
   data: Prisma.PlatformCreateManyInput | Prisma.PlatformCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
