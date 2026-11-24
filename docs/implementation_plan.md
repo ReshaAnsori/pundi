@@ -151,12 +151,12 @@ Tabel tambahan di fase lanjut: `AdCampaign`, `BudgetRule`, `SpendLog`, `ProductS
 
 ### Fase 2 — Adapter platform & sinkronisasi komisi
 **Tujuan:** komisi dari platform masuk otomatis ke database.
-- [ ] **Riset dulu:** per platform, cek apakah ada API resmi atau hanya ekspor CSV, dan field apa yang tersedia (status, subId, nominal)
-- [ ] Definisikan interface `AffiliatePlatform` (`fetchCommissions(since)`, `buildLink(product, subId)`, opsional `fetchProducts()`)
-- [ ] Implement adapter pertama (platform yang akunnya sudah ada); fallback: impor CSV
-- [ ] `SyncService` dengan jadwal (mis. tiap 1–6 jam), upsert idempoten berdasar unique key, catat `SyncRun`
-- [ ] Petakan komisi ke `AffiliateLink` lewat `subId`
-- [ ] Endpoint: `POST /sync/:platform` (manual), `GET /sync/runs`
+- [x] **Riset dulu:** per platform, cek apakah ada API resmi atau hanya ekspor CSV, dan field apa yang tersedia (status, subId, nominal)
+- [x] Definisikan interface `AffiliatePlatform` (`fetchCommissions(since)`, `buildLink(product, subId)`, opsional `fetchProducts()`)
+- [x] Implement adapter pertama (platform yang akunnya sudah ada); fallback: impor CSV
+- [x] `SyncService` dengan jadwal (mis. tiap 1–6 jam), upsert idempoten berdasar unique key, catat `SyncRun`
+- [x] Petakan komisi ke `AffiliateLink` lewat `subId`
+- [x] Endpoint: `POST /sync/:platform` (manual), `GET /sync/runs`
 
 **Selesai bila:** menjalankan sync dua kali tidak membuat data ganda, dan komisi terhubung ke konten via `subId`.
 

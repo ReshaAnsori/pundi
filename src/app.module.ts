@@ -11,6 +11,8 @@ import { PlatformsModule } from './platforms/platforms.module.js';
 import { ProductsModule } from './products/products.module.js';
 import { ContentsModule } from './contents/contents.module.js';
 import { LinksModule } from './links/links.module.js';
+import { SyncModule } from './sync/sync.module.js';
+import { CommissionsModule } from './commissions/commissions.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -30,6 +32,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     ProductsModule,
     ContentsModule,
     LinksModule,
+    SyncModule,
+    CommissionsModule,
   ],
   controllers: [AppController],
   providers: [

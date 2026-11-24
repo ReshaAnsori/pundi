@@ -145,4 +145,149 @@ describe('Pundi Backend (e2e)', () => {
         .expect(409);
     });
   });
+
+  describe('Platform Adapter & Commission Sync (Fase 2)', () => {
+    const uniqueSuffix = Date.now().toString();
+    let platformId: number;
+    let productId: number;
+    let contentId: number;
+    let generatedSubId: string;
+    const orderExternalId = `ORD_${uniqueSuffix}`;
+
+    it('setup: create platform shopee, product, content, and affiliate link', async () => {
+      // 1. Create or ensure standard shopee platform
+      const existingPlatRes = await request(app.getHttpServer())
+        .get('/platforms')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      let shopeePlat = existingPlatRes.body.find(
+        (p: { code: string }) => p.code === 'shopee',
+      );
+      if (!shopeePlat) {
+        const createPlat = await request(app.getHttpServer())
+          .post('/platforms')
+          .set('x-api-key', apiKey)
+          .send({ code: 'shopee', name: 'Shopee Official' })
+          .expect(201);
+        shopeePlat = createPlat.body;
+      }
+      platformId = shopeePlat.id;
+
+      // 2. Create product
+      const prodRes = await request(app.getHttpServer())
+        .post('/products')
+        .set('x-api-key', apiKey)
+        .send({
+          platformId,
+          externalId: `ITEM_${uniqueSuffix}`,
+          name: 'Botol Minum Olahraga',
+          price: 50000,
+          commissionRate: 10,
+        })
+        .expect(201);
+      productId = prodRes.body.id;
+
+      // 3. Create content
+      const contentRes = await request(app.getHttpServer())
+        .post('/contents')
+        .set('x-api-key', apiKey)
+        .send({
+          title: 'Review Botol Olahraga 2 Liter',
+          channel: 'instagram',
+          status: 'published',
+        })
+        .expect(201);
+      contentId = contentRes.body.id;
+
+      // 4. Create affiliate link
+      const linkRes = await request(app.getHttpServer())
+        .post('/links')
+        .set('x-api-key', apiKey)
+        .send({
+          productId,
+          contentId,
+        })
+        .expect(201);
+      generatedSubId = linkRes.body.subId;
+    });
+
+    it('should import commission CSV, map subId to link/content, and log SyncRun', async () => {
+      const csvData = `No. Pesanan,ID Produk,Sub_id 1,Estimasi Komisi,Total Pembayaran,Status Pesanan,Waktu Pesanan
+${orderExternalId},ITEM_${uniqueSuffix},${generatedSubId},Rp 15.000,Rp 150.000,Selesai,2026-11-24 10:00:00`;
+
+      const syncRes = await request(app.getHttpServer())
+        .post('/sync/shopee/csv')
+        .set('x-api-key', apiKey)
+        .send({ csv: csvData })
+        .expect(201);
+
+      expect(syncRes.body.status).toBe('ok');
+      expect(syncRes.body.recordsUpserted).toBe(1);
+
+      // Verify commission record in GET /commissions
+      const commRes = await request(app.getHttpServer())
+        .get(`/commissions?subId=${generatedSubId}`)
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(commRes.body).toHaveLength(1);
+      const comm = commRes.body[0];
+      expect(comm.orderExternalId).toBe(orderExternalId);
+      expect(comm.amount).toBe(15000);
+      expect(comm.orderAmount).toBe(150000);
+      expect(comm.status).toBe('valid');
+      expect(comm.link).toBeDefined();
+      expect(comm.link.subId).toBe(generatedSubId);
+      expect(comm.link.content.id).toBe(contentId);
+    });
+
+    it('idempotency test: importing the exact same CSV twice does not create duplicate commissions', async () => {
+      const csvData = `No. Pesanan,ID Produk,Sub_id 1,Estimasi Komisi,Total Pembayaran,Status Pesanan,Waktu Pesanan
+${orderExternalId},ITEM_${uniqueSuffix},${generatedSubId},Rp 15.000,Rp 150.000,Selesai,2026-11-24 10:00:00`;
+
+      // Import again
+      const syncRes2 = await request(app.getHttpServer())
+        .post('/sync/shopee/csv')
+        .set('x-api-key', apiKey)
+        .send({ csv: csvData })
+        .expect(201);
+
+      expect(syncRes2.body.status).toBe('ok');
+      expect(syncRes2.body.recordsUpserted).toBe(1);
+
+      // Verify commission count for this subId is still exactly 1
+      const commRes = await request(app.getHttpServer())
+        .get(`/commissions?subId=${generatedSubId}`)
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(commRes.body).toHaveLength(1);
+      expect(commRes.body[0].orderExternalId).toBe(orderExternalId);
+      expect(commRes.body[0].amount).toBe(15000);
+    });
+
+    it('should list sync history in GET /sync/runs', async () => {
+      const runsRes = await request(app.getHttpServer())
+        .get('/sync/runs')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(Array.isArray(runsRes.body)).toBe(true);
+      expect(runsRes.body.length).toBeGreaterThanOrEqual(1);
+      expect(runsRes.body[0].status).toBe('ok');
+      expect(runsRes.body[0].recordsUpserted).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should return aggregated commissions summary in GET /commissions/summary', async () => {
+      const summaryRes = await request(app.getHttpServer())
+        .get('/commissions/summary')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(summaryRes.body.totalCount).toBeGreaterThanOrEqual(1);
+      expect(summaryRes.body.totalValid).toBeGreaterThanOrEqual(15000);
+      expect(summaryRes.body.totalOrderAmount).toBeGreaterThanOrEqual(150000);
+    });
+  });
 });
