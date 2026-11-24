@@ -16,6 +16,7 @@ import { CommissionsModule } from './commissions/commissions.module.js';
 import { DashboardModule } from './dashboard/dashboard.module.js';
 import { UiModule } from './ui/ui.module.js';
 import { ResearchModule } from './research/research.module.js';
+import { AssistantModule } from './assistant/assistant.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -40,6 +41,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     DashboardModule,
     UiModule,
     ResearchModule,
+    AssistantModule,
   ],
   controllers: [AppController],
   providers: [

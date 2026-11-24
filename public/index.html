@@ -283,6 +283,9 @@
                 <p class="text-secondary small mb-0">Hubungkan konten promosi dengan link affiliate ber-subId unik</p>
               </div>
               <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1" onclick="openAiAssistantModal()">
+                  <i class="bi bi-stars"></i> AI Assistant
+                </button>
                 <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#addContentModal">
                   <i class="bi bi-file-plus"></i> Buat Konten
                 </button>
@@ -618,6 +621,84 @@
     </div>
   </div>
 
+  <!-- AI Content Assistant Modal (Fase 5) -->
+  <div class="modal fade" id="aiAssistantModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content bg-dark border-secondary">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title d-flex align-items-center gap-2">
+            <i class="bi bi-stars text-warning"></i> AI Content Assistant
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-2 mb-3">
+            <div class="col-md-5">
+              <label class="form-label small text-secondary">Pilih Produk</label>
+              <select class="form-select form-select-sm" id="aiModalProductSelect"></select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small text-secondary">Channel Target</label>
+              <select class="form-select form-select-sm" id="aiModalChannelSelect">
+                <option value="tiktok">TikTok Video</option>
+                <option value="instagram">Instagram Reels</option>
+                <option value="youtube">YouTube Shorts</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small text-secondary">Sudut Pandang (Angle)</label>
+              <select class="form-select form-select-sm" id="aiModalAngleSelect">
+                <option value="problem_solution">Problem & Solusi</option>
+                <option value="unboxing">Unboxing Jujur</option>
+                <option value="comparison">Perbandingan / Battle</option>
+                <option value="storytelling">Storytelling Personal</option>
+                <option value="recommendation">Rekomendasi Spesifik</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-sm w-100 mb-3" onclick="generateAiContentPreview()">
+            <i class="bi bi-lightning-charge me-1"></i> Generate Hook & Naskah Script
+          </button>
+
+          <!-- Result Area -->
+          <div id="aiGeneratedResultArea" class="d-none">
+            <div class="alert alert-dark border-secondary p-3 mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="fw-bold mb-0 text-warning"><i class="bi bi-lightbulb me-2"></i>Pilihan Hook Pembuka (3 Detik Pertama)</h6>
+                <span class="badge text-bg-success" id="aiGuardrailBadge">
+                  <i class="bi bi-shield-check me-1"></i> Lolos Kebijakan Iklan
+                </span>
+              </div>
+              <ul class="mb-0 small" id="aiHooksList"></ul>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small text-secondary fw-bold">Naskah Video Bertarget Waktu (Script)</label>
+              <textarea class="form-control font-monospace small bg-black text-light border-secondary" id="aiScriptOutput" rows="7" readonly></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small text-secondary fw-bold">Caption & Hashtags</label>
+              <textarea class="form-control small bg-black text-light border-secondary" id="aiCaptionOutput" rows="3" readonly></textarea>
+              <div class="small text-info mt-1" id="aiHashtagsOutput"></div>
+            </div>
+
+            <div class="alert alert-info py-2 small mb-0">
+              <i class="bi bi-info-circle me-1"></i> <strong>Catatan:</strong> Naskah akan disimpan sebagai <code>draft</code> dan otomatis dibuatkan link affiliate ber-<code>subId</code> unik. Pengguna wajib me-review sebelum mempublikasikannya.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" class="btn btn-success btn-sm d-none" id="btnSaveAiDraft" onclick="saveAiContentDraft()">
+            <i class="bi bi-check-lg me-1"></i> Simpan Draft & Pasang Link
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Bootstrap 5.3 JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -880,6 +961,12 @@
             </div>
           `).join('') : '<span class="text-secondary small">Belum ada link terpasang</span>';
 
+          const publishBtn = c.status === 'draft' ? `
+            <button class="btn btn-sm btn-outline-success me-1" onclick="publishContent(${c.id})" title="Review & Publish">
+              <i class="bi bi-check2-circle"></i> Publish
+            </button>
+          ` : '';
+
           tbody.innerHTML += `
             <tr>
               <td class="fw-bold text-light">${c.title}</td>
@@ -887,6 +974,7 @@
               <td><span class="badge text-bg-${c.status === 'published' ? 'success' : 'secondary'}">${c.status}</span></td>
               <td>${linksHtml}</td>
               <td class="text-center">
+                ${publishBtn}
                 <button class="btn btn-sm btn-outline-info" onclick="openLinkModalForContent(${c.id})">
                   <i class="bi bi-link-45deg"></i> Pasang Link
                 </button>
@@ -1128,6 +1216,92 @@
         document.getElementById('modalLinkProductSelect').value = productId;
         new bootstrap.Modal(document.getElementById('createLinkModal')).show();
       });
+    }
+
+    // AI Content Assistant Functions (Fase 5)
+    let currentAiDraft = null;
+
+    async function openAiAssistantModal(preselectedProductId) {
+      await loadProducts();
+      const select = document.getElementById('aiModalProductSelect');
+      select.innerHTML = '';
+      cachedProducts.forEach(p => {
+        select.innerHTML += `<option value="${p.id}" ${p.id === preselectedProductId ? 'selected' : ''}>${p.name} (${p.platform?.code})</option>`;
+      });
+
+      document.getElementById('aiGeneratedResultArea').classList.add('d-none');
+      document.getElementById('btnSaveAiDraft').classList.add('d-none');
+      currentAiDraft = null;
+
+      new bootstrap.Modal(document.getElementById('aiAssistantModal')).show();
+    }
+
+    async function generateAiContentPreview() {
+      const productId = parseInt(document.getElementById('aiModalProductSelect').value);
+      const channel = document.getElementById('aiModalChannelSelect').value;
+      const angle = document.getElementById('aiModalAngleSelect').value;
+
+      if (!productId) {
+        alert('Harap pilih produk terlebih dahulu');
+        return;
+      }
+
+      const res = await apiFetch('/assistant/generate', {
+        method: 'POST',
+        body: JSON.stringify({ productId, channel, angle })
+      });
+
+      if (res) {
+        currentAiDraft = res;
+        document.getElementById('aiGeneratedResultArea').classList.remove('d-none');
+        document.getElementById('btnSaveAiDraft').classList.remove('d-none');
+
+        // Hooks
+        const hList = document.getElementById('aiHooksList');
+        hList.innerHTML = '';
+        res.hooks.forEach(h => {
+          hList.innerHTML += `<li class="mb-1 text-light">"${h}"</li>`;
+        });
+
+        // Script
+        document.getElementById('aiScriptOutput').value = res.shortScript;
+
+        // Caption & Hashtags
+        document.getElementById('aiCaptionOutput').value = res.caption;
+        document.getElementById('aiHashtagsOutput').textContent = res.hashtags.join(' ');
+      }
+    }
+
+    async function saveAiContentDraft() {
+      if (!currentAiDraft) return;
+
+      const productId = currentAiDraft.product.id;
+      const channel = currentAiDraft.channel;
+      const angle = currentAiDraft.angle;
+
+      const res = await apiFetch('/assistant/generate-and-save', {
+        method: 'POST',
+        body: JSON.stringify({ productId, channel, angle })
+      });
+
+      if (res) {
+        alert(`Draft AI berhasil disimpan sebagai konten 'draft'!\nID Konten: ${res.content.id}\nLink Affiliate unik: ${res.link.subId}\nTracking URL: ${res.link.trackingUrl}\n\nSilakan review sebelum melakukan publish.`);
+        bootstrap.Modal.getInstance(document.getElementById('aiAssistantModal')).hide();
+        loadContents();
+      }
+    }
+
+    async function publishContent(contentId) {
+      if (!confirm('Apakah Anda sudah me-review naskah dan ingin mempublikasikannya sekarang?')) {
+        return;
+      }
+      const res = await apiFetch(`/assistant/contents/${contentId}/publish`, {
+        method: 'PATCH'
+      });
+      if (res) {
+        alert('Konten berhasil dipublikasikan!');
+        loadContents();
+      }
     }
 
     // Init

@@ -178,10 +178,10 @@ Tabel tambahan di fase lanjut: `AdCampaign`, `BudgetRule`, `SpendLog`, `ProductS
 
 ### Fase 5 — Content Assistant (LLM)
 **Tujuan:** mempercepat produksi konten, tanpa menggantikan review manual.
-- [ ] Layanan LLM: hook, script pendek, caption, hashtag per produk
-- [ ] Simpan draft ke `Content` (status `draft`)
-- [ ] Guardrail: tanpa klaim berlebihan, tanpa klaim kesehatan/medis
-- [ ] Review manual wajib sebelum status `published`
+- [x] Layanan LLM / Generator: hook, script pendek, caption, hashtag per produk
+- [x] Simpan draft ke `Content` (status `draft`)
+- [x] Guardrail: tanpa klaim berlebihan, tanpa klaim kesehatan/medis
+- [x] Review manual wajib sebelum status `published`
 
 ### Fase 6 — Scheduler / Antrean Posting
 **Tujuan:** merapikan jadwal posting.

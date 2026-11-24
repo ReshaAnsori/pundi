@@ -436,4 +436,133 @@ ${orderExternalId},ITEM_${uniqueSuffix},${generatedSubId},Rp 15.000,Rp 150.000,S
       expect(res.body).toContain('Peralatan Dapur');
     });
   });
+
+  describe('Content Assistant (Fase 5)', () => {
+    let f5PlatformId: number;
+    let f5ProductId: number;
+
+    beforeEach(async () => {
+      const suffix = Math.random().toString(36).substring(2, 9) + Date.now();
+      // Create platform
+      const platRes = await request(app.getHttpServer())
+        .post('/platforms')
+        .set('x-api-key', apiKey)
+        .send({ name: `Platform F5 ${suffix}`, code: `f5_${suffix}`, baseUrl: 'https://f5.example.com' })
+        .expect(201);
+      f5PlatformId = platRes.body.id;
+
+      // Create product
+      const prodRes = await request(app.getHttpServer())
+        .post('/products')
+        .set('x-api-key', apiKey)
+        .send({
+          externalId: `ext_${suffix}`,
+          name: `Produk F5 ${suffix}`,
+          platformId: f5PlatformId,
+          category: 'Kesehatan',
+          price: 85000,
+          commissionRate: 10,
+          soldCount: 500,
+          rating: 4.7,
+        })
+        .expect(201);
+      f5ProductId = prodRes.body.id;
+    });
+
+    it('POST /assistant/generate should return content preview with guardrails passed', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/assistant/generate')
+        .set('x-api-key', apiKey)
+        .send({
+          productId: f5ProductId,
+          channel: 'tiktok',
+          angle: 'problem_solution',
+          targetAudience: 'anak muda',
+        })
+        .expect(201);
+
+      expect(res.body.hooks).toBeDefined();
+      expect(Array.isArray(res.body.hooks)).toBe(true);
+      expect(res.body.hooks.length).toBeGreaterThan(0);
+      expect(res.body.shortScript).toBeDefined();
+      expect(res.body.caption).toBeDefined();
+      expect(Array.isArray(res.body.hashtags)).toBe(true);
+      expect(res.body.guardrailsCheck).toBeDefined();
+      expect(res.body.guardrailsCheck.passed).toBe(true);
+      expect(res.body.product.id).toBe(f5ProductId);
+      expect(res.body.channel).toBe('tiktok');
+      expect(res.body.angle).toBe('problem_solution');
+    });
+
+    it('POST /assistant/generate should work with different angles', async () => {
+      const angles = ['unboxing', 'comparison', 'storytelling', 'recommendation'];
+      for (const angle of angles) {
+        const res = await request(app.getHttpServer())
+          .post('/assistant/generate')
+          .set('x-api-key', apiKey)
+          .send({ productId: f5ProductId, channel: 'instagram', angle })
+          .expect(201);
+
+        expect(res.body.hooks.length).toBeGreaterThan(0);
+        expect(res.body.guardrailsCheck.passed).toBe(true);
+      }
+    });
+
+    it('POST /assistant/generate-and-save should create a draft content with link', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/assistant/generate-and-save')
+        .set('x-api-key', apiKey)
+        .send({
+          productId: f5ProductId,
+          channel: 'tiktok',
+          angle: 'unboxing',
+        })
+        .expect(201);
+
+      expect(res.body.content).toBeDefined();
+      expect(res.body.content.status).toBe('draft'); // MANDATORY: must always be draft
+      expect(res.body.link).toBeDefined();
+      expect(res.body.link.subId).toBeDefined();
+      expect(res.body.link.productId).toBe(f5ProductId);
+
+      expect(res.body.content.id).toBeDefined();
+    });
+
+    it('PATCH /assistant/contents/:id/publish should publish a draft', async () => {
+      // First create a draft
+      const saveRes = await request(app.getHttpServer())
+        .post('/assistant/generate-and-save')
+        .set('x-api-key', apiKey)
+        .send({ productId: f5ProductId, channel: 'instagram', angle: 'storytelling' })
+        .expect(201);
+
+      const contentId = saveRes.body.content.id;
+      expect(saveRes.body.content.status).toBe('draft');
+
+      // Now publish it
+      const pubRes = await request(app.getHttpServer())
+        .patch(`/assistant/contents/${contentId}/publish`)
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(pubRes.body.status).toBe('published');
+      expect(pubRes.body.publishedAt).toBeDefined();
+    });
+
+    it('POST /assistant/generate should return 404 for non-existent product', () => {
+      return request(app.getHttpServer())
+        .post('/assistant/generate')
+        .set('x-api-key', apiKey)
+        .send({ productId: 999999, channel: 'tiktok' })
+        .expect(404);
+    });
+
+    it('POST /assistant/generate should return 400 for missing productId', () => {
+      return request(app.getHttpServer())
+        .post('/assistant/generate')
+        .set('x-api-key', apiKey)
+        .send({ channel: 'tiktok' })
+        .expect(400);
+    });
+  });
 });
