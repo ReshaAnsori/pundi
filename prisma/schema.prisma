@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Platform {
+  id          Int          @id @default(autoincrement())
+  code        String       @unique // "shopee" | "tiktok"
+  name        String
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  products    Product[]
+  commissions Commission[]
+  syncRuns    SyncRun[]
+}
+
+model Product {
+  id             Int             @id @default(autoincrement())
+  platformId     Int
+  externalId     String
+  name           String
+  price          Int? // rupiah
+  commissionRate Float? // persen
+  url            String?
+  imageUrl       String?
+  category       String?
+  rating         Float?
+  soldCount      Int?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  platform       Platform        @relation(fields: [platformId], references: [id])
+  links          AffiliateLink[]
+
+  @@unique([platformId, externalId])
+}
+
+model Content {
+  id          Int             @id @default(autoincrement())
+  title       String
+  channel     String // "tiktok" | "instagram" | ...
+  status      String          @default("draft") // draft | published
+  externalUrl String?
+  publishedAt DateTime?
+  createdAt   DateTime        @default(now())
+  links       AffiliateLink[]
+}
+
+model AffiliateLink {
+  id          Int          @id @default(autoincrement())
+  productId   Int
+  contentId   Int?
+  subId       String       @unique // pengikat komisi -> konten
+  trackingUrl String
+  createdAt   DateTime     @default(now())
+  product     Product      @relation(fields: [productId], references: [id])
+  content     Content?     @relation(fields: [contentId], references: [id])
+  commissions Commission[]
+}
+
+model Commission {
+  id                Int            @id @default(autoincrement())
+  platformId        Int
+  linkId            Int?
+  orderExternalId   String
+  productExternalId String?
+  status            String // pending | valid | cancelled
+  amount            Int // komisi, rupiah
+  orderAmount       Int?
+  orderedAt         DateTime
+  settledAt         DateTime?
+  raw               String? // payload mentah (JSON string)
+  platform          Platform       @relation(fields: [platformId], references: [id])
+  link              AffiliateLink? @relation(fields: [linkId], references: [id])
+
+  @@unique([platformId, orderExternalId, productExternalId])
+}
+
+model SyncRun {
+  id              Int       @id @default(autoincrement())
+  platformId      Int
+  startedAt       DateTime  @default(now())
+  finishedAt      DateTime?
+  status          String // running | ok | failed
+  recordsUpserted Int       @default(0)
+  error           String?
+  platform        Platform  @relation(fields: [platformId], references: [id])
+}
