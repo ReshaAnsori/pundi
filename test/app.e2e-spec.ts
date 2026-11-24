@@ -925,4 +925,77 @@ ${orderExternalId},ITEM_${uniqueSuffix},${generatedSubId},Rp 15.000,Rp 150.000,S
       expect(res.body.overallRoas).toBeDefined();
     });
   });
+
+  describe('Analytics & ROI (Fase 8)', () => {
+    it('GET /analytics/roi/contents should return content ROI and hourly return metrics', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/analytics/roi/contents')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(Array.isArray(res.body)).toBe(true);
+      if (res.body.length > 0) {
+        const item = res.body[0];
+        expect(item.contentId).toBeDefined();
+        expect(item.totalRevenue).toBeDefined();
+        expect(item.hourlyReturn).toBeDefined();
+        expect(item.productionHours).toBeDefined();
+      }
+    });
+
+    it('GET /analytics/roi/niches should return grouped category performance', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/analytics/roi/niches')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(Array.isArray(res.body)).toBe(true);
+      if (res.body.length > 0) {
+        const niche = res.body[0];
+        expect(niche.niche).toBeDefined();
+        expect(niche.productCount).toBeDefined();
+        expect(niche.totalRevenue).toBeDefined();
+        expect(niche.avgRevenuePerProduct).toBeDefined();
+      }
+    });
+
+    it('GET /analytics/roi/platforms should return platform breakdowns', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/analytics/roi/platforms')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(Array.isArray(res.body)).toBe(true);
+      if (res.body.length > 0) {
+        const plat = res.body[0];
+        expect(plat.platformCode).toBeDefined();
+        expect(plat.totalRevenue).toBeDefined();
+      }
+    });
+
+    it('GET /analytics/roi/hourly should return labor efficiency and benchmark comparison', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/analytics/roi/hourly')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(res.body.totalHours).toBeDefined();
+      expect(res.body.avgHourlyReturn).toBeDefined();
+      expect(res.body.benchmark).toBe(50000);
+      expect(res.body.efficiencyRatio).toBeDefined();
+      expect(res.body.rating).toBeDefined();
+    });
+
+    it('GET /analytics/weekly-report should generate performance overview and actionable takeaways', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/analytics/weekly-report')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(res.body.period).toBeDefined();
+      expect(res.body.currentRevenue).toBeDefined();
+      expect(res.body.growthPercent).toBeDefined();
+      expect(Array.isArray(res.body.takeaways)).toBe(true);
+    });
+  });
 });

@@ -67,6 +67,9 @@
           <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-ads" type="button" onclick="loadAds()">
             <i class="bi bi-megaphone me-2"></i> Ads & Budget Guard
           </button>
+          <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-analytics" type="button" onclick="loadAnalytics()">
+            <i class="bi bi-bar-chart-line me-2"></i> Analytics & ROI
+          </button>
           <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-sync" type="button" onclick="loadSyncRuns()">
             <i class="bi bi-arrow-repeat me-2"></i> Sync & Impor CSV
           </button>
@@ -674,6 +677,195 @@
                 </table>
               </div>
             </div>
+          </div>
+
+          <!-- TAB 9: ANALYTICS & ROI (FASE 8) -->
+          <div class="tab-pane fade" id="tab-analytics">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div>
+                <h4 class="fw-bold mb-0">Analytics & Laporan ROI</h4>
+                <p class="text-secondary small mb-0">Analisis performa bisnis: ROI per konten, niche, platform, efisiensi jam kerja, dan laporan mingguan</p>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-info btn-sm" onclick="loadAnalytics()">
+                  <i class="bi bi-arrow-clockwise me-1"></i> Segarkan Analisis
+                </button>
+              </div>
+            </div>
+
+            <!-- Weekly Report Card (Laporan Mingguan) -->
+            <div class="card p-3 shadow-sm mb-4 border-info">
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <div>
+                  <h6 class="fw-bold text-info mb-0"><i class="bi bi-calendar2-week-fill me-2"></i> Laporan Performa Mingguan (Weekly Report)</h6>
+                  <span class="small text-secondary" id="weeklyReportPeriod">Periode: Memuat...</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="small text-secondary">Pilih Minggu:</span>
+                  <select class="form-select form-select-sm" id="weeklyReportOffsetSelect" onchange="loadWeeklyReport()" style="width: 170px;">
+                    <option value="0">Minggu Ini (7 Hari)</option>
+                    <option value="1">1 Minggu Lalu</option>
+                    <option value="2">2 Minggu Lalu</option>
+                    <option value="3">3 Minggu Lalu</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Weekly KPI Row -->
+              <div class="row g-2 mb-3">
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-2 border border-secondary rounded bg-dark">
+                    <span class="text-secondary small">Omset Komisi</span>
+                    <h5 class="fw-bold text-light mb-0 mt-1" id="weeklyRevenue">Rp 0</h5>
+                    <div class="small mt-1" id="weeklyGrowthBadge"><span class="badge text-bg-secondary">0% vs mgg lalu</span></div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-2 border border-secondary rounded bg-dark">
+                    <span class="text-secondary small">Laba Bersih Mingguan</span>
+                    <h5 class="fw-bold text-success mb-0 mt-1" id="weeklyNetProfit">Rp 0</h5>
+                    <span class="small text-secondary">Setelah spend iklan</span>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-2 border border-secondary rounded bg-dark">
+                    <span class="text-secondary small">Konten Terbit</span>
+                    <h5 class="fw-bold text-info mb-0 mt-1" id="weeklyPublishedCount">0 Konten</h5>
+                    <span class="small text-secondary">Minggu ini</span>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-2 border border-secondary rounded bg-dark">
+                    <span class="text-secondary small">Top Niche & Konten</span>
+                    <div class="small fw-bold text-warning text-truncate mt-1" id="weeklyTopNiche">-</div>
+                    <div class="small text-secondary text-truncate" id="weeklyTopContent">-</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Weekly Takeaways -->
+              <div class="p-2 rounded bg-black border border-secondary">
+                <span class="small fw-bold text-info"><i class="bi bi-lightbulb-fill me-1"></i> Rangkuman & Catatan Tindakan (Key Takeaways):</span>
+                <ul class="mb-0 small text-light mt-1 ps-3" id="weeklyTakeawaysList">
+                  <li>Memuat evaluasi mingguan...</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Labor Efficiency & Hourly Return Card -->
+            <div class="card p-3 shadow-sm mb-4 border-secondary">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0 text-light"><i class="bi bi-clock-history me-2 text-warning"></i> Analisis ROI per Jam Kerja (Efisiensi Waktu Kreator)</h6>
+                <span class="badge bg-warning-subtle text-warning small" id="hourlyEfficiencyRating">Rating: -</span>
+              </div>
+              <div class="row g-3">
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-2 border border-secondary rounded bg-dark">
+                    <span class="text-secondary small">Total Jam Kerja Produksi</span>
+                    <h4 class="fw-bold text-light mt-1 mb-0" id="hourlyTotalHours">0 Jam</h4>
+                    <span class="small text-secondary">Riset, syuting, editing</span>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-2 border border-secondary rounded bg-dark">
+                    <span class="text-secondary small">Return per Jam Kerja</span>
+                    <h4 class="fw-bold text-success mt-1 mb-0" id="hourlyAvgReturn">Rp 0 / jam</h4>
+                    <span class="small text-secondary">Net profit / total jam</span>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-2 border border-secondary rounded bg-dark">
+                    <span class="text-secondary small">Benchmark UMR Freelance</span>
+                    <h4 class="fw-bold text-light mt-1 mb-0">Rp 50.000 / jam</h4>
+                    <span class="small text-secondary">Standar acuan biaya waktu</span>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                  <div class="p-2 border border-secondary rounded bg-dark">
+                    <span class="text-secondary small">Rasio Efisiensi Waktu</span>
+                    <h4 class="fw-bold text-info mt-1 mb-0" id="hourlyRatio">0.00x</h4>
+                    <span class="small text-secondary">> 1.0x = Lebih profit dr freelance</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content ROI Table -->
+            <div class="card shadow-sm mb-4 border-secondary">
+              <div class="card-header bg-transparent border-secondary py-3">
+                <h6 class="fw-bold mb-0"><i class="bi bi-film me-2"></i> Peringkat ROI per Konten</h6>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                  <thead class="table-secondary text-uppercase small">
+                    <tr>
+                      <th>Konten & Channel</th>
+                      <th>Jam Kerja</th>
+                      <th>Pendapatan</th>
+                      <th>Spend Iklan</th>
+                      <th>Laba Bersih</th>
+                      <th>ROI Iklan</th>
+                      <th>Nilai / Jam Kerja</th>
+                    </tr>
+                  </thead>
+                  <tbody id="analyticsContentTableBody">
+                    <tr><td colspan="7" class="text-center text-secondary py-3">Memuat peringkat ROI konten...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Two-column Layout: Niche ROI & Platform ROI -->
+            <div class="row g-4">
+              <!-- Niche ROI -->
+              <div class="col-lg-6">
+                <div class="card shadow-sm h-100 border-secondary">
+                  <div class="card-header bg-transparent border-secondary py-3">
+                    <h6 class="fw-bold mb-0"><i class="bi bi-tags me-2"></i> ROI per Niche / Kategori</h6>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                      <thead class="table-secondary text-uppercase small">
+                        <tr>
+                          <th>Niche / Kategori</th>
+                          <th>Produk</th>
+                          <th>Total Komisi</th>
+                          <th>Rata-rata / Produk</th>
+                        </tr>
+                      </thead>
+                      <tbody id="analyticsNicheTableBody">
+                        <tr><td colspan="4" class="text-center text-secondary py-3">Memuat data niche...</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Platform ROI -->
+              <div class="col-lg-6">
+                <div class="card shadow-sm h-100 border-secondary">
+                  <div class="card-header bg-transparent border-secondary py-3">
+                    <h6 class="fw-bold mb-0"><i class="bi bi-diagram-3 me-2"></i> ROI per Platform Affiliate</h6>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                      <thead class="table-secondary text-uppercase small">
+                        <tr>
+                          <th>Platform</th>
+                          <th>Total Pesanan</th>
+                          <th>Total Komisi</th>
+                          <th>Rata-rata / Order</th>
+                        </tr>
+                      </thead>
+                      <tbody id="analyticsPlatformTableBody">
+                        <tr><td colspan="4" class="text-center text-secondary py-3">Memuat data platform...</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
         </div>
@@ -2121,6 +2313,136 @@
       if (res) {
         alert(`Budget Guard Check Selesai:\nJumlah campaign auto-paused: ${res.triggeredPauses}\nPlatform cap exceeded: ${res.platformBudgetExceeded.join(', ') || 'None'}`);
         loadAds();
+      }
+    }
+
+    // Analytics & ROI (Fase 8)
+    async function loadAnalytics() {
+      await Promise.all([
+        loadWeeklyReport(),
+        loadHourlyAnalysis(),
+        loadContentRoi(),
+        loadNicheRoi(),
+        loadPlatformRoi()
+      ]);
+    }
+
+    async function loadWeeklyReport() {
+      const offset = document.getElementById('weeklyReportOffsetSelect').value;
+      const report = await apiFetch(`/analytics/weekly-report?offset=${offset}`);
+      if (!report) return;
+
+      document.getElementById('weeklyReportPeriod').textContent = `Periode: ${report.period.start} s/d ${report.period.end}`;
+      document.getElementById('weeklyRevenue').textContent = formatRupiah(report.currentRevenue);
+      document.getElementById('weeklyNetProfit').textContent = formatRupiah(report.netProfitThisWeek);
+      document.getElementById('weeklyPublishedCount').textContent = `${report.contentsPublished} Konten`;
+
+      // Growth badge
+      const growthBadge = document.getElementById('weeklyGrowthBadge');
+      const gPct = report.growthPercent;
+      const gColor = gPct > 0 ? 'success' : gPct < 0 ? 'danger' : 'secondary';
+      const gSign = gPct > 0 ? '+' : '';
+      growthBadge.innerHTML = `<span class="badge text-bg-${gColor}">${gSign}${gPct}% vs minggu lalu</span>`;
+
+      // Top niche & content
+      document.getElementById('weeklyTopNiche').textContent = report.topNiche ? `Niche: ${report.topNiche.name} (${formatRupiah(report.topNiche.revenue)})` : 'Belum ada data';
+      document.getElementById('weeklyTopContent').textContent = report.topContent ? `Konten: ${report.topContent.title}` : 'Belum ada data';
+
+      // Takeaways
+      const tList = document.getElementById('weeklyTakeawaysList');
+      tList.innerHTML = '';
+      if (report.takeaways && report.takeaways.length > 0) {
+        report.takeaways.forEach(t => {
+          tList.innerHTML += `<li class="mb-1">${t}</li>`;
+        });
+      } else {
+        tList.innerHTML = '<li>Data aktivitas minggu ini masih dalam pengumpulan.</li>';
+      }
+    }
+
+    async function loadHourlyAnalysis() {
+      const data = await apiFetch('/analytics/roi/hourly');
+      if (!data) return;
+
+      document.getElementById('hourlyEfficiencyRating').textContent = data.rating;
+      document.getElementById('hourlyTotalHours').textContent = `${data.totalHours} Jam`;
+      document.getElementById('hourlyAvgReturn').textContent = `${formatRupiah(data.avgHourlyReturn)} / jam`;
+      document.getElementById('hourlyRatio').textContent = `${data.efficiencyRatio}x`;
+    }
+
+    async function loadContentRoi() {
+      const contents = await apiFetch('/analytics/roi/contents');
+      const tbody = document.getElementById('analyticsContentTableBody');
+      tbody.innerHTML = '';
+
+      if (contents && contents.length > 0) {
+        contents.forEach(c => {
+          const roiStr = c.roiPercent !== null ? `<span class="badge text-bg-${c.roiPercent >= 100 ? 'success' : c.roiPercent >= 0 ? 'warning' : 'danger'}">${c.roiPercent}%</span>` : '<span class="text-secondary small">Organik</span>';
+          const returnColor = c.hourlyReturn >= 50000 ? 'text-success' : c.hourlyReturn > 0 ? 'text-warning' : 'text-danger';
+
+          tbody.innerHTML += `
+            <tr>
+              <td>
+                <div class="fw-bold text-light">${c.title}</div>
+                <span class="badge text-bg-primary text-uppercase">${c.channel}</span>
+                <span class="small text-secondary ms-1">#${c.contentId}</span>
+              </td>
+              <td class="font-monospace small text-light">${c.productionHours} jam</td>
+              <td class="font-monospace small text-light">${formatRupiah(c.totalRevenue)}</td>
+              <td class="font-monospace small text-danger">${formatRupiah(c.adSpend)}</td>
+              <td class="font-monospace small fw-bold ${c.netProfit >= 0 ? 'text-success' : 'text-danger'}">${formatRupiah(c.netProfit)}</td>
+              <td>${roiStr}</td>
+              <td class="font-monospace small fw-bold ${returnColor}">${formatRupiah(c.hourlyReturn)} / jam</td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-secondary py-3">Belum ada konten untuk dianalisis</td></tr>';
+      }
+    }
+
+    async function loadNicheRoi() {
+      const niches = await apiFetch('/analytics/roi/niches');
+      const tbody = document.getElementById('analyticsNicheTableBody');
+      tbody.innerHTML = '';
+
+      if (niches && niches.length > 0) {
+        niches.forEach(n => {
+          tbody.innerHTML += `
+            <tr>
+              <td class="fw-bold text-light">${n.niche}</td>
+              <td class="small text-light">${n.productCount} produk</td>
+              <td class="font-monospace small text-success fw-bold">${formatRupiah(n.totalRevenue)}</td>
+              <td class="font-monospace small text-secondary">${formatRupiah(n.avgRevenuePerProduct)}</td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-secondary py-3">Belum ada data niche</td></tr>';
+      }
+    }
+
+    async function loadPlatformRoi() {
+      const platforms = await apiFetch('/analytics/roi/platforms');
+      const tbody = document.getElementById('analyticsPlatformTableBody');
+      tbody.innerHTML = '';
+
+      if (platforms && platforms.length > 0) {
+        platforms.forEach(p => {
+          tbody.innerHTML += `
+            <tr>
+              <td>
+                <span class="fw-bold text-light">${p.platformName}</span>
+                <span class="badge text-bg-dark border border-secondary text-uppercase ms-1">${p.platformCode}</span>
+              </td>
+              <td class="small text-light">${p.orderCount} order</td>
+              <td class="font-monospace small text-success fw-bold">${formatRupiah(p.totalRevenue)}</td>
+              <td class="font-monospace small text-secondary">${formatRupiah(p.avgCommissionPerOrder)}</td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-secondary py-3">Belum ada data platform</td></tr>';
       }
     }
 

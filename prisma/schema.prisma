@@ -43,15 +43,16 @@ model Product {
 }
 
 model Content {
-  id          Int               @id @default(autoincrement())
-  title       String
-  channel     String // "tiktok" | "instagram" | ...
-  status      String            @default("draft") // draft | scheduled | published
-  externalUrl String?
-  publishedAt DateTime?
-  createdAt   DateTime          @default(now())
-  links       AffiliateLink[]
-  schedules   PostingSchedule[]
+  id              Int               @id @default(autoincrement())
+  title           String
+  channel         String // "tiktok" | "instagram" | ...
+  status          String            @default("draft") // draft | scheduled | published
+  externalUrl     String?
+  publishedAt     DateTime?
+  productionHours Float?            @default(1.5) // jam kerja produksi (riset, syuting, edit)
+  createdAt       DateTime          @default(now())
+  links           AffiliateLink[]
+  schedules       PostingSchedule[]
 }
 
 model AffiliateLink {

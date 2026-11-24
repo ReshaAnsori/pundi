@@ -28,10 +28,12 @@ export type AggregateContent = {
 
 export type ContentAvgAggregateOutputType = {
   id: number | null
+  productionHours: number | null
 }
 
 export type ContentSumAggregateOutputType = {
   id: number | null
+  productionHours: number | null
 }
 
 export type ContentMinAggregateOutputType = {
@@ -41,6 +43,7 @@ export type ContentMinAggregateOutputType = {
   status: string | null
   externalUrl: string | null
   publishedAt: Date | null
+  productionHours: number | null
   createdAt: Date | null
 }
 
@@ -51,6 +54,7 @@ export type ContentMaxAggregateOutputType = {
   status: string | null
   externalUrl: string | null
   publishedAt: Date | null
+  productionHours: number | null
   createdAt: Date | null
 }
 
@@ -61,6 +65,7 @@ export type ContentCountAggregateOutputType = {
   status: number
   externalUrl: number
   publishedAt: number
+  productionHours: number
   createdAt: number
   _all: number
 }
@@ -68,10 +73,12 @@ export type ContentCountAggregateOutputType = {
 
 export type ContentAvgAggregateInputType = {
   id?: true
+  productionHours?: true
 }
 
 export type ContentSumAggregateInputType = {
   id?: true
+  productionHours?: true
 }
 
 export type ContentMinAggregateInputType = {
@@ -81,6 +88,7 @@ export type ContentMinAggregateInputType = {
   status?: true
   externalUrl?: true
   publishedAt?: true
+  productionHours?: true
   createdAt?: true
 }
 
@@ -91,6 +99,7 @@ export type ContentMaxAggregateInputType = {
   status?: true
   externalUrl?: true
   publishedAt?: true
+  productionHours?: true
   createdAt?: true
 }
 
@@ -101,6 +110,7 @@ export type ContentCountAggregateInputType = {
   status?: true
   externalUrl?: true
   publishedAt?: true
+  productionHours?: true
   createdAt?: true
   _all?: true
 }
@@ -198,6 +208,7 @@ export type ContentGroupByOutputType = {
   status: string
   externalUrl: string | null
   publishedAt: Date | null
+  productionHours: number | null
   createdAt: Date
   _count: ContentCountAggregateOutputType | null
   _avg: ContentAvgAggregateOutputType | null
@@ -231,6 +242,7 @@ export type ContentWhereInput = {
   status?: Prisma.StringFilter<"Content"> | string
   externalUrl?: Prisma.StringNullableFilter<"Content"> | string | null
   publishedAt?: Prisma.DateTimeNullableFilter<"Content"> | Date | string | null
+  productionHours?: Prisma.FloatNullableFilter<"Content"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Content"> | Date | string
   links?: Prisma.AffiliateLinkListRelationFilter
   schedules?: Prisma.PostingScheduleListRelationFilter
@@ -243,6 +255,7 @@ export type ContentOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   externalUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  productionHours?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   links?: Prisma.AffiliateLinkOrderByRelationAggregateInput
   schedules?: Prisma.PostingScheduleOrderByRelationAggregateInput
@@ -258,6 +271,7 @@ export type ContentWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.StringFilter<"Content"> | string
   externalUrl?: Prisma.StringNullableFilter<"Content"> | string | null
   publishedAt?: Prisma.DateTimeNullableFilter<"Content"> | Date | string | null
+  productionHours?: Prisma.FloatNullableFilter<"Content"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Content"> | Date | string
   links?: Prisma.AffiliateLinkListRelationFilter
   schedules?: Prisma.PostingScheduleListRelationFilter
@@ -270,6 +284,7 @@ export type ContentOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   externalUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  productionHours?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ContentCountOrderByAggregateInput
   _avg?: Prisma.ContentAvgOrderByAggregateInput
@@ -288,6 +303,7 @@ export type ContentScalarWhereWithAggregatesInput = {
   status?: Prisma.StringWithAggregatesFilter<"Content"> | string
   externalUrl?: Prisma.StringNullableWithAggregatesFilter<"Content"> | string | null
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Content"> | Date | string | null
+  productionHours?: Prisma.FloatNullableWithAggregatesFilter<"Content"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Content"> | Date | string
 }
 
@@ -297,6 +313,7 @@ export type ContentCreateInput = {
   status?: string
   externalUrl?: string | null
   publishedAt?: Date | string | null
+  productionHours?: number | null
   createdAt?: Date | string
   links?: Prisma.AffiliateLinkCreateNestedManyWithoutContentInput
   schedules?: Prisma.PostingScheduleCreateNestedManyWithoutContentInput
@@ -309,6 +326,7 @@ export type ContentUncheckedCreateInput = {
   status?: string
   externalUrl?: string | null
   publishedAt?: Date | string | null
+  productionHours?: number | null
   createdAt?: Date | string
   links?: Prisma.AffiliateLinkUncheckedCreateNestedManyWithoutContentInput
   schedules?: Prisma.PostingScheduleUncheckedCreateNestedManyWithoutContentInput
@@ -320,6 +338,7 @@ export type ContentUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  productionHours?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   links?: Prisma.AffiliateLinkUpdateManyWithoutContentNestedInput
   schedules?: Prisma.PostingScheduleUpdateManyWithoutContentNestedInput
@@ -332,6 +351,7 @@ export type ContentUncheckedUpdateInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  productionHours?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   links?: Prisma.AffiliateLinkUncheckedUpdateManyWithoutContentNestedInput
   schedules?: Prisma.PostingScheduleUncheckedUpdateManyWithoutContentNestedInput
@@ -344,6 +364,7 @@ export type ContentCreateManyInput = {
   status?: string
   externalUrl?: string | null
   publishedAt?: Date | string | null
+  productionHours?: number | null
   createdAt?: Date | string
 }
 
@@ -353,6 +374,7 @@ export type ContentUpdateManyMutationInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  productionHours?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -363,6 +385,7 @@ export type ContentUncheckedUpdateManyInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  productionHours?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -373,11 +396,13 @@ export type ContentCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   externalUrl?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
+  productionHours?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type ContentAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  productionHours?: Prisma.SortOrder
 }
 
 export type ContentMaxOrderByAggregateInput = {
@@ -387,6 +412,7 @@ export type ContentMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   externalUrl?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
+  productionHours?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -397,11 +423,13 @@ export type ContentMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   externalUrl?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
+  productionHours?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type ContentSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  productionHours?: Prisma.SortOrder
 }
 
 export type ContentNullableScalarRelationFilter = {
@@ -454,6 +482,7 @@ export type ContentCreateWithoutLinksInput = {
   status?: string
   externalUrl?: string | null
   publishedAt?: Date | string | null
+  productionHours?: number | null
   createdAt?: Date | string
   schedules?: Prisma.PostingScheduleCreateNestedManyWithoutContentInput
 }
@@ -465,6 +494,7 @@ export type ContentUncheckedCreateWithoutLinksInput = {
   status?: string
   externalUrl?: string | null
   publishedAt?: Date | string | null
+  productionHours?: number | null
   createdAt?: Date | string
   schedules?: Prisma.PostingScheduleUncheckedCreateNestedManyWithoutContentInput
 }
@@ -491,6 +521,7 @@ export type ContentUpdateWithoutLinksInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  productionHours?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schedules?: Prisma.PostingScheduleUpdateManyWithoutContentNestedInput
 }
@@ -502,6 +533,7 @@ export type ContentUncheckedUpdateWithoutLinksInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  productionHours?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   schedules?: Prisma.PostingScheduleUncheckedUpdateManyWithoutContentNestedInput
 }
@@ -512,6 +544,7 @@ export type ContentCreateWithoutSchedulesInput = {
   status?: string
   externalUrl?: string | null
   publishedAt?: Date | string | null
+  productionHours?: number | null
   createdAt?: Date | string
   links?: Prisma.AffiliateLinkCreateNestedManyWithoutContentInput
 }
@@ -523,6 +556,7 @@ export type ContentUncheckedCreateWithoutSchedulesInput = {
   status?: string
   externalUrl?: string | null
   publishedAt?: Date | string | null
+  productionHours?: number | null
   createdAt?: Date | string
   links?: Prisma.AffiliateLinkUncheckedCreateNestedManyWithoutContentInput
 }
@@ -549,6 +583,7 @@ export type ContentUpdateWithoutSchedulesInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  productionHours?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   links?: Prisma.AffiliateLinkUpdateManyWithoutContentNestedInput
 }
@@ -560,6 +595,7 @@ export type ContentUncheckedUpdateWithoutSchedulesInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  productionHours?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   links?: Prisma.AffiliateLinkUncheckedUpdateManyWithoutContentNestedInput
 }
@@ -611,6 +647,7 @@ export type ContentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   status?: boolean
   externalUrl?: boolean
   publishedAt?: boolean
+  productionHours?: boolean
   createdAt?: boolean
   links?: boolean | Prisma.Content$linksArgs<ExtArgs>
   schedules?: boolean | Prisma.Content$schedulesArgs<ExtArgs>
@@ -624,6 +661,7 @@ export type ContentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   status?: boolean
   externalUrl?: boolean
   publishedAt?: boolean
+  productionHours?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["content"]>
 
@@ -634,6 +672,7 @@ export type ContentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   status?: boolean
   externalUrl?: boolean
   publishedAt?: boolean
+  productionHours?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["content"]>
 
@@ -644,10 +683,11 @@ export type ContentSelectScalar = {
   status?: boolean
   externalUrl?: boolean
   publishedAt?: boolean
+  productionHours?: boolean
   createdAt?: boolean
 }
 
-export type ContentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "channel" | "status" | "externalUrl" | "publishedAt" | "createdAt", ExtArgs["result"]["content"]>
+export type ContentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "channel" | "status" | "externalUrl" | "publishedAt" | "productionHours" | "createdAt", ExtArgs["result"]["content"]>
 export type ContentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   links?: boolean | Prisma.Content$linksArgs<ExtArgs>
   schedules?: boolean | Prisma.Content$schedulesArgs<ExtArgs>
@@ -669,6 +709,7 @@ export type $ContentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     status: string
     externalUrl: string | null
     publishedAt: Date | null
+    productionHours: number | null
     createdAt: Date
   }, ExtArgs["result"]["content"]>
   composites: {}
@@ -1101,6 +1142,7 @@ export interface ContentFieldRefs {
   readonly status: Prisma.FieldRef<"Content", 'String'>
   readonly externalUrl: Prisma.FieldRef<"Content", 'String'>
   readonly publishedAt: Prisma.FieldRef<"Content", 'DateTime'>
+  readonly productionHours: Prisma.FieldRef<"Content", 'Float'>
   readonly createdAt: Prisma.FieldRef<"Content", 'DateTime'>
 }
     

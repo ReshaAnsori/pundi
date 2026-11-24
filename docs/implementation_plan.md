@@ -198,9 +198,9 @@ Tabel tambahan di fase lanjut: `AdCampaign`, `BudgetRule`, `SpendLog`, `ProductS
 - [x] Setiap iklan memakai `subId` unik
 
 ### Fase 8 — Analytics
-- [ ] ROI per konten, niche, platform
-- [ ] ROI per jam kerja
-- [ ] Laporan mingguan
+- [x] ROI per konten, niche, platform
+- [x] ROI per jam kerja
+- [x] Laporan mingguan
 
 ## 6. Risiko & Mitigasi
 

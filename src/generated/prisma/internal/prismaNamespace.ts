@@ -1314,6 +1314,7 @@ export const ContentScalarFieldEnum = {
   status: 'status',
   externalUrl: 'externalUrl',
   publishedAt: 'publishedAt',
+  productionHours: 'productionHours',
   createdAt: 'createdAt'
 } as const
 

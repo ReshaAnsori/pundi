@@ -19,6 +19,7 @@ import { ResearchModule } from './research/research.module.js';
 import { AssistantModule } from './assistant/assistant.module.js';
 import { SchedulerModule } from './scheduler/scheduler.module.js';
 import { AdsModule } from './ads/ads.module.js';
+import { AnalyticsModule } from './analytics/analytics.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -46,6 +47,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     AssistantModule,
     SchedulerModule,
     AdsModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [

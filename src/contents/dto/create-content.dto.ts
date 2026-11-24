@@ -27,4 +27,7 @@ export class CreateContentDto {
   @IsDateString()
   @IsOptional()
   publishedAt?: string;
+
+  @IsOptional()
+  productionHours?: number;
 }
