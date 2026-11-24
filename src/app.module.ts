@@ -17,6 +17,7 @@ import { DashboardModule } from './dashboard/dashboard.module.js';
 import { UiModule } from './ui/ui.module.js';
 import { ResearchModule } from './research/research.module.js';
 import { AssistantModule } from './assistant/assistant.module.js';
+import { SchedulerModule } from './scheduler/scheduler.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -42,6 +43,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     UiModule,
     ResearchModule,
     AssistantModule,
+    SchedulerModule,
   ],
   controllers: [AppController],
   providers: [

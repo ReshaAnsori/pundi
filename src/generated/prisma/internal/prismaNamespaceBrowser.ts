@@ -57,7 +57,8 @@ export const ModelName = {
   AffiliateLink: 'AffiliateLink',
   Commission: 'Commission',
   SyncRun: 'SyncRun',
-  ProductScore: 'ProductScore'
+  ProductScore: 'ProductScore',
+  PostingSchedule: 'PostingSchedule'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -170,6 +171,21 @@ export const ProductScoreScalarFieldEnum = {
 } as const
 
 export type ProductScoreScalarFieldEnum = (typeof ProductScoreScalarFieldEnum)[keyof typeof ProductScoreScalarFieldEnum]
+
+
+export const PostingScheduleScalarFieldEnum = {
+  id: 'id',
+  contentId: 'contentId',
+  channel: 'channel',
+  scheduledFor: 'scheduledFor',
+  status: 'status',
+  reminderSent: 'reminderSent',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PostingScheduleScalarFieldEnum = (typeof PostingScheduleScalarFieldEnum)[keyof typeof PostingScheduleScalarFieldEnum]
 
 
 export const SortOrder = {

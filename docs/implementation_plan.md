@@ -185,9 +185,9 @@ Tabel tambahan di fase lanjut: `AdCampaign`, `BudgetRule`, `SpendLog`, `ProductS
 
 ### Fase 6 — Scheduler / Antrean Posting
 **Tujuan:** merapikan jadwal posting.
-- [ ] Antrean konten terjadwal + pengingat (notifikasi) untuk upload manual
-- [ ] Auto-post hanya untuk platform yang menyediakan API resmi
-- [ ] Batasi frekuensi untuk menghindari pola spam
+- [x] Antrean konten terjadwal + pengingat (notifikasi) untuk upload manual
+- [x] Auto-post hanya untuk platform yang menyediakan API resmi
+- [x] Batasi frekuensi untuk menghindari pola spam
 
 ### Fase 7 — Ads Manager + Budget Guard (opsional, terakhir)
 **Tujuan:** iklan terkontrol, hanya bila organik sudah terbukti profit.

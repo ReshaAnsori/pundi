@@ -565,4 +565,197 @@ ${orderExternalId},ITEM_${uniqueSuffix},${generatedSubId},Rp 15.000,Rp 150.000,S
         .expect(400);
     });
   });
+
+  describe('Scheduler & Antrean Posting (Fase 6)', () => {
+    let f6ContentId: number;
+
+    beforeEach(async () => {
+      const suffix = Math.random().toString(36).substring(2, 9) + Date.now();
+      const contentRes = await request(app.getHttpServer())
+        .post('/contents')
+        .set('x-api-key', apiKey)
+        .send({
+          title: `Konten Jadwal ${suffix}`,
+          channel: 'instagram',
+          status: 'draft',
+        })
+        .expect(201);
+      f6ContentId = contentRes.body.id;
+    });
+
+    it('POST /scheduler/schedules should schedule content and transition status to scheduled', async () => {
+      const scheduleTime = new Date(Date.now() + 86400000 * (2000 + Math.floor(Math.random() * 500))).toISOString();
+      const res = await request(app.getHttpServer())
+        .post('/scheduler/schedules')
+        .set('x-api-key', apiKey)
+        .send({
+          contentId: f6ContentId,
+          channel: 'instagram',
+          scheduledFor: scheduleTime,
+          notes: 'Upload jam makan siang',
+        })
+        .expect(201);
+
+      expect(res.body.schedule).toBeDefined();
+      expect(res.body.schedule.status).toBe('pending');
+      expect(res.body.schedule.contentId).toBe(f6ContentId);
+      expect(res.body.frequencyCheck).toBeDefined();
+      expect(res.body.frequencyCheck.allowed).toBe(true);
+
+      // Verify content status changed to scheduled
+      const contentCheck = await request(app.getHttpServer())
+        .get(`/contents/${f6ContentId}`)
+        .set('x-api-key', apiKey)
+        .expect(200);
+      expect(contentCheck.body.status).toBe('scheduled');
+    });
+
+    it('GET /scheduler/schedules should list scheduled items', async () => {
+      const scheduleTime = new Date(Date.now() + 3600000).toISOString();
+      await request(app.getHttpServer())
+        .post('/scheduler/schedules')
+        .set('x-api-key', apiKey)
+        .send({
+          contentId: f6ContentId,
+          scheduledFor: scheduleTime,
+          force: true,
+        })
+        .expect(201);
+
+      const listRes = await request(app.getHttpServer())
+        .get('/scheduler/schedules?channel=instagram')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(Array.isArray(listRes.body)).toBe(true);
+      const found = listRes.body.find((s: { contentId: number }) => s.contentId === f6ContentId);
+      expect(found).toBeDefined();
+      expect(found.status).toBe('pending');
+    });
+
+    it('GET /scheduler/frequency should return anti-spam daily posting quotas', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/scheduler/frequency')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(res.body.date).toBeDefined();
+      expect(Array.isArray(res.body.channels)).toBe(true);
+      const ig = res.body.channels.find((c: { channel: string }) => c.channel === 'instagram');
+      expect(ig).toBeDefined();
+      expect(ig.maxLimit).toBe(3);
+    });
+
+    it('Anti-spam guard should block excess schedules on same date without force', async () => {
+      const futureDays = 100 + Math.floor(Math.random() * 500);
+      const targetDate = new Date(Date.now() + 86400000 * futureDays);
+      targetDate.setHours(10, 0, 0, 0);
+
+      // Instagram max limit is 3. Fill up 3 schedules
+      for (let i = 0; i < 3; i++) {
+        const dummyContent = await request(app.getHttpServer())
+          .post('/contents')
+          .set('x-api-key', apiKey)
+          .send({ title: `Fill ${i} ${futureDays}`, channel: 'instagram', status: 'draft' })
+          .expect(201);
+
+        await request(app.getHttpServer())
+          .post('/scheduler/schedules')
+          .set('x-api-key', apiKey)
+          .send({
+            contentId: dummyContent.body.id,
+            channel: 'instagram',
+            scheduledFor: targetDate.toISOString(),
+          })
+          .expect(201);
+      }
+
+      // 4th schedule should be blocked by anti-spam guard
+      const blockRes = await request(app.getHttpServer())
+        .post('/scheduler/schedules')
+        .set('x-api-key', apiKey)
+        .send({
+          contentId: f6ContentId,
+          channel: 'instagram',
+          scheduledFor: targetDate.toISOString(),
+        })
+        .expect(400);
+
+      expect(blockRes.body.error).toBe('SpamPatternPrevention');
+
+      // But should succeed if force = true
+      const forceRes = await request(app.getHttpServer())
+        .post('/scheduler/schedules')
+        .set('x-api-key', apiKey)
+        .send({
+          contentId: f6ContentId,
+          channel: 'instagram',
+          scheduledFor: targetDate.toISOString(),
+          force: true,
+        })
+        .expect(201);
+
+      expect(forceRes.body.schedule).toBeDefined();
+    });
+
+    it('PATCH /scheduler/schedules/:id/posted should mark schedule as posted and content as published', async () => {
+      const scheduleTime = new Date(Date.now() + 1800000).toISOString();
+      const schedRes = await request(app.getHttpServer())
+        .post('/scheduler/schedules')
+        .set('x-api-key', apiKey)
+        .send({
+          contentId: f6ContentId,
+          scheduledFor: scheduleTime,
+          force: true,
+        })
+        .expect(201);
+
+      const scheduleId = schedRes.body.schedule.id;
+
+      const postRes = await request(app.getHttpServer())
+        .patch(`/scheduler/schedules/${scheduleId}/posted`)
+        .set('x-api-key', apiKey)
+        .send({ externalUrl: 'https://instagram.com/p/manual_post_123' })
+        .expect(200);
+
+      expect(postRes.body.status).toBe('posted');
+
+      // Check content is now published
+      const contentRes = await request(app.getHttpServer())
+        .get(`/contents/${f6ContentId}`)
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(contentRes.body.status).toBe('published');
+      expect(contentRes.body.externalUrl).toBe('https://instagram.com/p/manual_post_123');
+    });
+
+    it('DELETE /scheduler/schedules/:id should remove schedule and revert content to draft', async () => {
+      const scheduleTime = new Date(Date.now() + 1800000).toISOString();
+      const schedRes = await request(app.getHttpServer())
+        .post('/scheduler/schedules')
+        .set('x-api-key', apiKey)
+        .send({
+          contentId: f6ContentId,
+          scheduledFor: scheduleTime,
+          force: true,
+        })
+        .expect(201);
+
+      const scheduleId = schedRes.body.schedule.id;
+
+      await request(app.getHttpServer())
+        .delete(`/scheduler/schedules/${scheduleId}`)
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      // Verify content is back to draft
+      const contentRes = await request(app.getHttpServer())
+        .get(`/contents/${f6ContentId}`)
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(contentRes.body.status).toBe('draft');
+    });
+  });
 });

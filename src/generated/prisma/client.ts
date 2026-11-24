@@ -76,3 +76,8 @@ export type SyncRun = Prisma.SyncRunModel
  * 
  */
 export type ProductScore = Prisma.ProductScoreModel
+/**
+ * Model PostingSchedule
+ * 
+ */
+export type PostingSchedule = Prisma.PostingScheduleModel

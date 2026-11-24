@@ -233,6 +233,7 @@ export type ContentWhereInput = {
   publishedAt?: Prisma.DateTimeNullableFilter<"Content"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Content"> | Date | string
   links?: Prisma.AffiliateLinkListRelationFilter
+  schedules?: Prisma.PostingScheduleListRelationFilter
 }
 
 export type ContentOrderByWithRelationInput = {
@@ -244,6 +245,7 @@ export type ContentOrderByWithRelationInput = {
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   links?: Prisma.AffiliateLinkOrderByRelationAggregateInput
+  schedules?: Prisma.PostingScheduleOrderByRelationAggregateInput
 }
 
 export type ContentWhereUniqueInput = Prisma.AtLeast<{
@@ -258,6 +260,7 @@ export type ContentWhereUniqueInput = Prisma.AtLeast<{
   publishedAt?: Prisma.DateTimeNullableFilter<"Content"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Content"> | Date | string
   links?: Prisma.AffiliateLinkListRelationFilter
+  schedules?: Prisma.PostingScheduleListRelationFilter
 }, "id">
 
 export type ContentOrderByWithAggregationInput = {
@@ -296,6 +299,7 @@ export type ContentCreateInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   links?: Prisma.AffiliateLinkCreateNestedManyWithoutContentInput
+  schedules?: Prisma.PostingScheduleCreateNestedManyWithoutContentInput
 }
 
 export type ContentUncheckedCreateInput = {
@@ -307,6 +311,7 @@ export type ContentUncheckedCreateInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   links?: Prisma.AffiliateLinkUncheckedCreateNestedManyWithoutContentInput
+  schedules?: Prisma.PostingScheduleUncheckedCreateNestedManyWithoutContentInput
 }
 
 export type ContentUpdateInput = {
@@ -317,6 +322,7 @@ export type ContentUpdateInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   links?: Prisma.AffiliateLinkUpdateManyWithoutContentNestedInput
+  schedules?: Prisma.PostingScheduleUpdateManyWithoutContentNestedInput
 }
 
 export type ContentUncheckedUpdateInput = {
@@ -328,6 +334,7 @@ export type ContentUncheckedUpdateInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   links?: Prisma.AffiliateLinkUncheckedUpdateManyWithoutContentNestedInput
+  schedules?: Prisma.PostingScheduleUncheckedUpdateManyWithoutContentNestedInput
 }
 
 export type ContentCreateManyInput = {
@@ -402,6 +409,11 @@ export type ContentNullableScalarRelationFilter = {
   isNot?: Prisma.ContentWhereInput | null
 }
 
+export type ContentScalarRelationFilter = {
+  is?: Prisma.ContentWhereInput
+  isNot?: Prisma.ContentWhereInput
+}
+
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
@@ -422,6 +434,20 @@ export type ContentUpdateOneWithoutLinksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ContentUpdateToOneWithWhereWithoutLinksInput, Prisma.ContentUpdateWithoutLinksInput>, Prisma.ContentUncheckedUpdateWithoutLinksInput>
 }
 
+export type ContentCreateNestedOneWithoutSchedulesInput = {
+  create?: Prisma.XOR<Prisma.ContentCreateWithoutSchedulesInput, Prisma.ContentUncheckedCreateWithoutSchedulesInput>
+  connectOrCreate?: Prisma.ContentCreateOrConnectWithoutSchedulesInput
+  connect?: Prisma.ContentWhereUniqueInput
+}
+
+export type ContentUpdateOneRequiredWithoutSchedulesNestedInput = {
+  create?: Prisma.XOR<Prisma.ContentCreateWithoutSchedulesInput, Prisma.ContentUncheckedCreateWithoutSchedulesInput>
+  connectOrCreate?: Prisma.ContentCreateOrConnectWithoutSchedulesInput
+  upsert?: Prisma.ContentUpsertWithoutSchedulesInput
+  connect?: Prisma.ContentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ContentUpdateToOneWithWhereWithoutSchedulesInput, Prisma.ContentUpdateWithoutSchedulesInput>, Prisma.ContentUncheckedUpdateWithoutSchedulesInput>
+}
+
 export type ContentCreateWithoutLinksInput = {
   title: string
   channel: string
@@ -429,6 +455,7 @@ export type ContentCreateWithoutLinksInput = {
   externalUrl?: string | null
   publishedAt?: Date | string | null
   createdAt?: Date | string
+  schedules?: Prisma.PostingScheduleCreateNestedManyWithoutContentInput
 }
 
 export type ContentUncheckedCreateWithoutLinksInput = {
@@ -439,6 +466,7 @@ export type ContentUncheckedCreateWithoutLinksInput = {
   externalUrl?: string | null
   publishedAt?: Date | string | null
   createdAt?: Date | string
+  schedules?: Prisma.PostingScheduleUncheckedCreateNestedManyWithoutContentInput
 }
 
 export type ContentCreateOrConnectWithoutLinksInput = {
@@ -464,6 +492,7 @@ export type ContentUpdateWithoutLinksInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  schedules?: Prisma.PostingScheduleUpdateManyWithoutContentNestedInput
 }
 
 export type ContentUncheckedUpdateWithoutLinksInput = {
@@ -474,6 +503,65 @@ export type ContentUncheckedUpdateWithoutLinksInput = {
   externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  schedules?: Prisma.PostingScheduleUncheckedUpdateManyWithoutContentNestedInput
+}
+
+export type ContentCreateWithoutSchedulesInput = {
+  title: string
+  channel: string
+  status?: string
+  externalUrl?: string | null
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  links?: Prisma.AffiliateLinkCreateNestedManyWithoutContentInput
+}
+
+export type ContentUncheckedCreateWithoutSchedulesInput = {
+  id?: number
+  title: string
+  channel: string
+  status?: string
+  externalUrl?: string | null
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  links?: Prisma.AffiliateLinkUncheckedCreateNestedManyWithoutContentInput
+}
+
+export type ContentCreateOrConnectWithoutSchedulesInput = {
+  where: Prisma.ContentWhereUniqueInput
+  create: Prisma.XOR<Prisma.ContentCreateWithoutSchedulesInput, Prisma.ContentUncheckedCreateWithoutSchedulesInput>
+}
+
+export type ContentUpsertWithoutSchedulesInput = {
+  update: Prisma.XOR<Prisma.ContentUpdateWithoutSchedulesInput, Prisma.ContentUncheckedUpdateWithoutSchedulesInput>
+  create: Prisma.XOR<Prisma.ContentCreateWithoutSchedulesInput, Prisma.ContentUncheckedCreateWithoutSchedulesInput>
+  where?: Prisma.ContentWhereInput
+}
+
+export type ContentUpdateToOneWithWhereWithoutSchedulesInput = {
+  where?: Prisma.ContentWhereInput
+  data: Prisma.XOR<Prisma.ContentUpdateWithoutSchedulesInput, Prisma.ContentUncheckedUpdateWithoutSchedulesInput>
+}
+
+export type ContentUpdateWithoutSchedulesInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  channel?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  links?: Prisma.AffiliateLinkUpdateManyWithoutContentNestedInput
+}
+
+export type ContentUncheckedUpdateWithoutSchedulesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  channel?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  externalUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  links?: Prisma.AffiliateLinkUncheckedUpdateManyWithoutContentNestedInput
 }
 
 
@@ -483,10 +571,12 @@ export type ContentUncheckedUpdateWithoutLinksInput = {
 
 export type ContentCountOutputType = {
   links: number
+  schedules: number
 }
 
 export type ContentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   links?: boolean | ContentCountOutputTypeCountLinksArgs
+  schedules?: boolean | ContentCountOutputTypeCountSchedulesArgs
 }
 
 /**
@@ -506,6 +596,13 @@ export type ContentCountOutputTypeCountLinksArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.AffiliateLinkWhereInput
 }
 
+/**
+ * ContentCountOutputType without action
+ */
+export type ContentCountOutputTypeCountSchedulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PostingScheduleWhereInput
+}
+
 
 export type ContentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -516,6 +613,7 @@ export type ContentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   publishedAt?: boolean
   createdAt?: boolean
   links?: boolean | Prisma.Content$linksArgs<ExtArgs>
+  schedules?: boolean | Prisma.Content$schedulesArgs<ExtArgs>
   _count?: boolean | Prisma.ContentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["content"]>
 
@@ -552,6 +650,7 @@ export type ContentSelectScalar = {
 export type ContentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "channel" | "status" | "externalUrl" | "publishedAt" | "createdAt", ExtArgs["result"]["content"]>
 export type ContentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   links?: boolean | Prisma.Content$linksArgs<ExtArgs>
+  schedules?: boolean | Prisma.Content$schedulesArgs<ExtArgs>
   _count?: boolean | Prisma.ContentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ContentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -561,6 +660,7 @@ export type $ContentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Content"
   objects: {
     links: Prisma.$AffiliateLinkPayload<ExtArgs>[]
+    schedules: Prisma.$PostingSchedulePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -965,6 +1065,7 @@ readonly fields: ContentFieldRefs;
 export interface Prisma__ContentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   links<T extends Prisma.Content$linksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Content$linksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AffiliateLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  schedules<T extends Prisma.Content$schedulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Content$schedulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostingSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1413,6 +1514,30 @@ export type Content$linksArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.AffiliateLinkScalarFieldEnum | Prisma.AffiliateLinkScalarFieldEnum[]
+}
+
+/**
+ * Content.schedules
+ */
+export type Content$schedulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PostingSchedule
+   */
+  select?: Prisma.PostingScheduleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PostingSchedule
+   */
+  omit?: Prisma.PostingScheduleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PostingScheduleInclude<ExtArgs> | null
+  where?: Prisma.PostingScheduleWhereInput
+  orderBy?: Prisma.PostingScheduleOrderByWithRelationInput | Prisma.PostingScheduleOrderByWithRelationInput[]
+  cursor?: Prisma.PostingScheduleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PostingScheduleScalarFieldEnum | Prisma.PostingScheduleScalarFieldEnum[]
 }
 
 /**

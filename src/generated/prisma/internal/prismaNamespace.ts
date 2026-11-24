@@ -403,7 +403,8 @@ export const ModelName = {
   AffiliateLink: 'AffiliateLink',
   Commission: 'Commission',
   SyncRun: 'SyncRun',
-  ProductScore: 'ProductScore'
+  ProductScore: 'ProductScore',
+  PostingSchedule: 'PostingSchedule'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "platform" | "product" | "content" | "affiliateLink" | "commission" | "syncRun" | "productScore"
+    modelProps: "platform" | "product" | "content" | "affiliateLink" | "commission" | "syncRun" | "productScore" | "postingSchedule"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -941,6 +942,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PostingSchedule: {
+      payload: Prisma.$PostingSchedulePayload<ExtArgs>
+      fields: Prisma.PostingScheduleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PostingScheduleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostingSchedulePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PostingScheduleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostingSchedulePayload>
+        }
+        findFirst: {
+          args: Prisma.PostingScheduleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostingSchedulePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PostingScheduleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostingSchedulePayload>
+        }
+        findMany: {
+          args: Prisma.PostingScheduleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostingSchedulePayload>[]
+        }
+        create: {
+          args: Prisma.PostingScheduleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostingSchedulePayload>
+        }
+        createMany: {
+          args: Prisma.PostingScheduleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PostingScheduleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostingSchedulePayload>[]
+        }
+        delete: {
+          args: Prisma.PostingScheduleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostingSchedulePayload>
+        }
+        update: {
+          args: Prisma.PostingScheduleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostingSchedulePayload>
+        }
+        deleteMany: {
+          args: Prisma.PostingScheduleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PostingScheduleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PostingScheduleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostingSchedulePayload>[]
+        }
+        upsert: {
+          args: Prisma.PostingScheduleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostingSchedulePayload>
+        }
+        aggregate: {
+          args: Prisma.PostingScheduleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePostingSchedule>
+        }
+        groupBy: {
+          args: Prisma.PostingScheduleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PostingScheduleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PostingScheduleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PostingScheduleCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1074,6 +1149,21 @@ export const ProductScoreScalarFieldEnum = {
 } as const
 
 export type ProductScoreScalarFieldEnum = (typeof ProductScoreScalarFieldEnum)[keyof typeof ProductScoreScalarFieldEnum]
+
+
+export const PostingScheduleScalarFieldEnum = {
+  id: 'id',
+  contentId: 'contentId',
+  channel: 'channel',
+  scheduledFor: 'scheduledFor',
+  status: 'status',
+  reminderSent: 'reminderSent',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PostingScheduleScalarFieldEnum = (typeof PostingScheduleScalarFieldEnum)[keyof typeof PostingScheduleScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1290,6 +1380,7 @@ export type GlobalOmitConfig = {
   commission?: Prisma.CommissionOmit
   syncRun?: Prisma.SyncRunOmit
   productScore?: Prisma.ProductScoreOmit
+  postingSchedule?: Prisma.PostingScheduleOmit
 }
 
 /* Types for Logging */

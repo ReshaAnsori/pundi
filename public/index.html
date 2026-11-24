@@ -61,6 +61,9 @@
           <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-contents" type="button" onclick="loadContents()">
             <i class="bi bi-camera-video me-2"></i> Konten & Link
           </button>
+          <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-scheduler" type="button" onclick="loadScheduler()">
+            <i class="bi bi-calendar3 me-2"></i> Jadwal & Antrean
+          </button>
           <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-sync" type="button" onclick="loadSyncRuns()">
             <i class="bi bi-arrow-repeat me-2"></i> Sync & Impor CSV
           </button>
@@ -470,6 +473,87 @@
             </div>
           </div>
 
+          <!-- TAB 7: JADWAL & ANTREAN POSTING (FASE 6) -->
+          <div class="tab-pane fade" id="tab-scheduler">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div>
+                <h4 class="fw-bold mb-0">Jadwal & Antrean Posting</h4>
+                <p class="text-secondary small mb-0">Atur antrean posting, pantau kuota anti-spam harian, dan upload manual saat waktu tiba</p>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-warning btn-sm" onclick="checkDueReminders()">
+                  <i class="bi bi-bell me-1"></i> Pengingat Siap Upload (<span id="dueReminderCountBadge">0</span>)
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="openCreateScheduleModal()">
+                  <i class="bi bi-plus-lg me-1"></i> Buat Jadwal Baru
+                </button>
+              </div>
+            </div>
+
+            <!-- Anti-Spam Guard Quota Meter -->
+            <div class="card p-3 shadow-sm mb-4 border-secondary">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small fw-bold text-secondary text-uppercase"><i class="bi bi-shield-check text-info me-1"></i> Kuota Anti-Spam Hari Ini (Batas Maksimum Posting Aman)</span>
+                <span class="badge bg-secondary-subtle text-secondary small" id="antiSpamDateBadge">Hari Ini</span>
+              </div>
+              <div class="row g-3" id="antiSpamMetersContainer">
+                <div class="col-12 text-secondary small">Memuat data frekuensi posting...</div>
+              </div>
+            </div>
+
+            <!-- Due Reminders Box (Hidden by default, shown when due items exist) -->
+            <div id="dueRemindersContainer" class="mb-4 d-none">
+              <div class="alert alert-warning border-warning shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h6 class="fw-bold mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i> Konten Jatuh Tempo - Siap Diupload!</h6>
+                  <span class="badge bg-danger">Wajib Upload Manual</span>
+                </div>
+                <p class="small text-dark mb-2">Karena platform affiliate melarang auto-posting massal tanpa API verified partner resmi, silakan upload konten berikut ke aplikasi sosial media Anda lalu klik <strong>Tandai Sudah Diposting</strong>:</p>
+                <div class="list-group list-group-flush rounded border" id="dueRemindersListGroup"></div>
+              </div>
+            </div>
+
+            <!-- Schedule List Card -->
+            <div class="card shadow-sm border-secondary">
+              <div class="card-header bg-transparent border-secondary py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h6 class="fw-bold mb-0"><i class="bi bi-calendar-event me-2"></i> Daftar Antrean Posting</h6>
+                <div class="d-flex gap-2">
+                  <select class="form-select form-select-sm" id="scheduleFilterStatus" onchange="loadScheduler()" style="width: 140px;">
+                    <option value="">Semua Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="ready_to_post">Ready to Post</option>
+                    <option value="posted">Posted</option>
+                    <option value="skipped">Skipped</option>
+                  </select>
+                  <select class="form-select form-select-sm" id="scheduleFilterChannel" onchange="loadScheduler()" style="width: 140px;">
+                    <option value="">Semua Channel</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="shopee_video">Shopee Video</option>
+                  </select>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                  <thead class="table-secondary text-uppercase small">
+                    <tr>
+                      <th>Jadwal Tayang</th>
+                      <th>Channel</th>
+                      <th>Judul Konten & Produk Terkait</th>
+                      <th>Status</th>
+                      <th>Catatan</th>
+                      <th class="text-end" style="min-width: 160px;">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="schedulesTableBody">
+                    <tr><td colspan="6" class="text-center text-secondary py-3">Memuat antrean posting...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -693,6 +777,61 @@
           <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
           <button type="button" class="btn btn-success btn-sm d-none" id="btnSaveAiDraft" onclick="saveAiContentDraft()">
             <i class="bi bi-check-lg me-1"></i> Simpan Draft & Pasang Link
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Schedule Modal (Fase 6) -->
+  <div class="modal fade" id="createScheduleModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark border-secondary">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title"><i class="bi bi-calendar-plus me-2 text-primary"></i> Buat Jadwal Posting Baru</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small">Pilih Konten</label>
+            <select class="form-select form-select-sm" id="modalScheduleContentId" onchange="onScheduleContentChange()">
+              <option value="">-- Pilih Konten --</option>
+            </select>
+            <div class="form-text small text-secondary">Hanya konten draft atau siap posting yang ditampilkan.</div>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small">Channel Tujuan</label>
+              <select class="form-select form-select-sm" id="modalScheduleChannel">
+                <option value="tiktok">TikTok (Max 4/hari)</option>
+                <option value="instagram">Instagram (Max 3/hari)</option>
+                <option value="youtube">YouTube (Max 4/hari)</option>
+                <option value="shopee_video">Shopee Video (Max 5/hari)</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small">Waktu Tayang</label>
+              <input type="datetime-local" class="form-control form-control-sm" id="modalScheduleTime">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small">Catatan / Rencana Hook</label>
+            <input type="text" class="form-control form-control-sm" id="modalScheduleNotes" placeholder="misal: Upload jam istirahat kantor 12:30 WIB">
+          </div>
+          <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" id="modalScheduleForce">
+            <label class="form-check-label small text-secondary" for="modalScheduleForce">
+              Force (Abaikan peringatan batas spam jika kuota harian tercapai)
+            </label>
+          </div>
+          <div class="alert alert-secondary py-2 small mb-0 border-secondary">
+            <i class="bi bi-info-circle me-1"></i> Saat jadwal jatuh tempo, sistem akan memunculkan pengingat upload manual dengan tautan produk dan materi posting.
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="submitCreateSchedule()">
+            <i class="bi bi-check-lg me-1"></i> Simpan Jadwal
           </button>
         </div>
       </div>
@@ -967,14 +1106,21 @@
             </button>
           ` : '';
 
+          const scheduleBtn = c.status !== 'published' ? `
+            <button class="btn btn-sm btn-outline-warning me-1" onclick="openCreateScheduleModal(${c.id}, '${c.channel}')" title="Atur Jadwal Posting">
+              <i class="bi bi-calendar-plus"></i> Jadwalkan
+            </button>
+          ` : '';
+
           tbody.innerHTML += `
             <tr>
               <td class="fw-bold text-light">${c.title}</td>
               <td><span class="badge text-bg-primary badge-channel">${c.channel}</span></td>
-              <td><span class="badge text-bg-${c.status === 'published' ? 'success' : 'secondary'}">${c.status}</span></td>
+              <td><span class="badge text-bg-${c.status === 'published' ? 'success' : c.status === 'scheduled' ? 'warning' : 'secondary'}">${c.status}</span></td>
               <td>${linksHtml}</td>
               <td class="text-center">
                 ${publishBtn}
+                ${scheduleBtn}
                 <button class="btn btn-sm btn-outline-info" onclick="openLinkModalForContent(${c.id})">
                   <i class="bi bi-link-45deg"></i> Pasang Link
                 </button>
@@ -1300,6 +1446,236 @@
       });
       if (res) {
         alert('Konten berhasil dipublikasikan!');
+        loadContents();
+      }
+    }
+
+    // Scheduler & Antrean Posting (Fase 6)
+    async function loadFrequencySummary() {
+      const data = await apiFetch('/scheduler/frequency');
+      const container = document.getElementById('antiSpamMetersContainer');
+      if (!data || !container) return;
+
+      document.getElementById('antiSpamDateBadge').textContent = data.date;
+      container.innerHTML = '';
+
+      data.channels.forEach(ch => {
+        const pct = Math.min(100, Math.round((ch.currentCount / ch.maxLimit) * 100));
+        const color = ch.status === 'limit_reached' ? 'danger' : ch.status === 'warning' ? 'warning' : 'success';
+        const label = ch.channel === 'shopee_video' ? 'Shopee Video' : ch.channel.charAt(0).toUpperCase() + ch.channel.slice(1);
+
+        container.innerHTML += `
+          <div class="col-sm-6 col-lg-3">
+            <div class="p-2 border border-secondary rounded bg-dark">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="fw-bold small text-light">${label}</span>
+                <span class="badge text-bg-${color} small">${ch.currentCount}/${ch.maxLimit} post</span>
+              </div>
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-${color}" style="width: ${pct}%"></div>
+              </div>
+              <div class="d-flex justify-content-between mt-1 text-secondary" style="font-size: 0.75rem;">
+                <span>Tersisa: ${ch.remaining}</span>
+                <span>${ch.status === 'limit_reached' ? 'Batas Tercapai' : 'Aman'}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    async function checkDueReminders() {
+      const reminders = await apiFetch('/scheduler/reminders');
+      const badge = document.getElementById('dueReminderCountBadge');
+      const box = document.getElementById('dueRemindersContainer');
+      const listGroup = document.getElementById('dueRemindersListGroup');
+
+      if (!reminders) return;
+
+      badge.textContent = reminders.length;
+
+      if (reminders.length > 0) {
+        box.classList.remove('d-none');
+        listGroup.innerHTML = '';
+
+        reminders.forEach(r => {
+          const links = r.content?.links || [];
+          const linkStr = links.length > 0 ? links.map(l => `${l.product?.name || 'Produk'}: ${l.trackingUrl}`).join('\n') : '';
+
+          listGroup.innerHTML += `
+            <div class="list-group-item bg-dark text-light border-secondary p-3">
+              <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+                <div>
+                  <span class="badge bg-primary text-uppercase me-2">${r.channel}</span>
+                  <span class="fw-bold text-light">${r.content?.title || 'Konten'}</span>
+                  <div class="small text-secondary mt-1">
+                    Jadwal: <span class="text-warning">${new Date(r.scheduledFor).toLocaleString('id-ID')}</span>
+                    ${r.notes ? ` &bull; <em>"${r.notes}"</em>` : ''}
+                  </div>
+                </div>
+                <div class="d-flex gap-1">
+                  ${links.length > 0 ? `
+                    <button class="btn btn-sm btn-outline-info" onclick="navigator.clipboard.writeText('${links[0].trackingUrl}'); alert('Link affiliate disalin!')">
+                      <i class="bi bi-clipboard"></i> Salin Link
+                    </button>
+                  ` : ''}
+                  <button class="btn btn-sm btn-success" onclick="markSchedulePosted(${r.id})">
+                    <i class="bi bi-check2-circle"></i> Tandai Sudah Diposting
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        box.classList.add('d-none');
+      }
+    }
+
+    async function loadScheduler() {
+      await loadFrequencySummary();
+      await checkDueReminders();
+
+      const status = document.getElementById('scheduleFilterStatus').value;
+      const channel = document.getElementById('scheduleFilterChannel').value;
+
+      const params = new URLSearchParams();
+      if (status) params.append('status', status);
+      if (channel) params.append('channel', channel);
+
+      const schedules = await apiFetch(`/scheduler/schedules?${params.toString()}`);
+      const tbody = document.getElementById('schedulesTableBody');
+      tbody.innerHTML = '';
+
+      if (schedules && schedules.length > 0) {
+        schedules.forEach(s => {
+          const dt = new Date(s.scheduledFor).toLocaleString('id-ID', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+          });
+
+          const statusBadge = s.status === 'posted' ? 'success' : s.status === 'ready_to_post' ? 'warning' : s.status === 'skipped' ? 'secondary' : 'info';
+
+          const actionBtn = s.status !== 'posted' ? `
+            <button class="btn btn-sm btn-outline-success me-1" onclick="markSchedulePosted(${s.id})" title="Tandai Sudah Diposting">
+              <i class="bi bi-check-lg"></i>
+            </button>
+          ` : '';
+
+          tbody.innerHTML += `
+            <tr>
+              <td class="font-monospace small text-light">${dt}</td>
+              <td><span class="badge text-bg-primary">${s.channel}</span></td>
+              <td>
+                <div class="fw-bold text-light">${s.content?.title || '-'}</div>
+                <div class="small text-secondary">ID Konten: #${s.contentId}</div>
+              </td>
+              <td><span class="badge text-bg-${statusBadge}">${s.status}</span></td>
+              <td class="small text-secondary">${s.notes || '-'}</td>
+              <td class="text-end">
+                ${actionBtn}
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteSchedule(${s.id})" title="Batalkan Jadwal">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary py-3">Tidak ada antrean posting terjadwal</td></tr>';
+      }
+    }
+
+    async function openCreateScheduleModal(preselectedContentId, preselectedChannel) {
+      await loadContents();
+      const select = document.getElementById('modalScheduleContentId');
+      select.innerHTML = '<option value="">-- Pilih Konten --</option>';
+
+      cachedContents.forEach(c => {
+        select.innerHTML += `<option value="${c.id}" ${c.id === preselectedContentId ? 'selected' : ''}>[${c.channel}] ${c.title} (${c.status})</option>`;
+      });
+
+      if (preselectedChannel) {
+        document.getElementById('modalScheduleChannel').value = preselectedChannel;
+      }
+
+      // Default to tomorrow 12:00
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(12, 0, 0, 0);
+      const tzOffset = tomorrow.getTimezoneOffset() * 60000;
+      const localISOTime = (new Date(tomorrow - tzOffset)).toISOString().slice(0, 16);
+      document.getElementById('modalScheduleTime').value = localISOTime;
+      document.getElementById('modalScheduleNotes').value = '';
+      document.getElementById('modalScheduleForce').checked = false;
+
+      new bootstrap.Modal(document.getElementById('createScheduleModal')).show();
+    }
+
+    function onScheduleContentChange() {
+      const contentId = parseInt(document.getElementById('modalScheduleContentId').value);
+      const content = cachedContents.find(c => c.id === contentId);
+      if (content && content.channel) {
+        const channelSelect = document.getElementById('modalScheduleChannel');
+        const opts = Array.from(channelSelect.options).map(o => o.value);
+        if (opts.includes(content.channel)) {
+          channelSelect.value = content.channel;
+        }
+      }
+    }
+
+    async function submitCreateSchedule() {
+      const contentId = parseInt(document.getElementById('modalScheduleContentId').value);
+      const channel = document.getElementById('modalScheduleChannel').value;
+      const scheduledForRaw = document.getElementById('modalScheduleTime').value;
+      const notes = document.getElementById('modalScheduleNotes').value.trim() || undefined;
+      const force = document.getElementById('modalScheduleForce').checked;
+
+      if (!contentId || !scheduledForRaw) {
+        alert('Harap pilih konten dan tentukan waktu tayang!');
+        return;
+      }
+
+      const scheduledFor = new Date(scheduledForRaw).toISOString();
+
+      const res = await apiFetch('/scheduler/schedules', {
+        method: 'POST',
+        body: JSON.stringify({ contentId, channel, scheduledFor, notes, force })
+      });
+
+      if (res) {
+        alert(`Jadwal posting berhasil dibuat!\nStatus: ${res.schedule.status}\nFrekuensi hari itu: ${res.frequencyCheck.currentCount + 1}/${res.frequencyCheck.maxLimit}`);
+        bootstrap.Modal.getInstance(document.getElementById('createScheduleModal')).hide();
+        loadScheduler();
+      }
+    }
+
+    async function markSchedulePosted(scheduleId) {
+      const extUrl = prompt('Masukkan URL postingan di platform (opsional, kosongkan jika belum ada):', '');
+      if (extUrl === null) return; // user cancelled prompt
+
+      const res = await apiFetch(`/scheduler/schedules/${scheduleId}/posted`, {
+        method: 'PATCH',
+        body: JSON.stringify({ externalUrl: extUrl.trim() || undefined })
+      });
+
+      if (res) {
+        alert('Konten berhasil ditandai sebagai "posted" dan status konten menjadi "published"!');
+        loadScheduler();
+        loadContents();
+      }
+    }
+
+    async function deleteSchedule(scheduleId) {
+      if (!confirm('Yakin ingin membatalkan dan menghapus jadwal posting ini?')) {
+        return;
+      }
+      const res = await apiFetch(`/scheduler/schedules/${scheduleId}`, {
+        method: 'DELETE'
+      });
+      if (res) {
+        alert('Jadwal berhasil dihapus!');
+        loadScheduler();
         loadContents();
       }
     }
