@@ -171,10 +171,10 @@ Tabel tambahan di fase lanjut: `AdCampaign`, `BudgetRule`, `SpendLog`, `ProductS
 
 ### Fase 4 — Product Research
 **Tujuan:** daftar produk layak promosi setiap hari.
-- [ ] Ambil data produk dari feed/API platform
-- [ ] Skor produk: komisi %, harga, rating, tren penjualan
-- [ ] Endpoint + halaman "Rekomendasi hari ini", dengan filter niche dan harga
-- [ ] Tandai produk (shortlist / sudah dipakai / skip)
+- [x] Ambil data produk dari feed/API platform
+- [x] Skor produk: komisi %, harga, rating, tren penjualan
+- [x] Endpoint + halaman "Rekomendasi hari ini", dengan filter niche dan harga
+- [x] Tandai produk (shortlist / sudah dipakai / skip)
 
 ### Fase 5 — Content Assistant (LLM)
 **Tujuan:** mempercepat produksi konten, tanpa menggantikan review manual.

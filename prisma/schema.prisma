@@ -37,6 +37,7 @@ model Product {
   updatedAt      DateTime        @updatedAt
   platform       Platform        @relation(fields: [platformId], references: [id])
   links          AffiliateLink[]
+  score          ProductScore?
 
   @@unique([platformId, externalId])
 }
@@ -92,3 +93,16 @@ model SyncRun {
   error           String?
   platform        Platform  @relation(fields: [platformId], references: [id])
 }
+
+model ProductScore {
+  id        Int      @id @default(autoincrement())
+  productId Int      @unique
+  score     Float // skor komposit 0 - 100
+  status    String   @default("new") // new | shortlisted | used | skipped
+  notes     String?
+  breakdown String? // JSON string: { commissionScore, soldScore, ratingScore, priceScore }
+  scoredAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+

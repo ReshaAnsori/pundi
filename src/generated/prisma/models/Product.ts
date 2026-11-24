@@ -302,6 +302,7 @@ export type ProductWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   platform?: Prisma.XOR<Prisma.PlatformScalarRelationFilter, Prisma.PlatformWhereInput>
   links?: Prisma.AffiliateLinkListRelationFilter
+  score?: Prisma.XOR<Prisma.ProductScoreNullableScalarRelationFilter, Prisma.ProductScoreWhereInput> | null
 }
 
 export type ProductOrderByWithRelationInput = {
@@ -320,6 +321,7 @@ export type ProductOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   platform?: Prisma.PlatformOrderByWithRelationInput
   links?: Prisma.AffiliateLinkOrderByRelationAggregateInput
+  score?: Prisma.ProductScoreOrderByWithRelationInput
 }
 
 export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -342,6 +344,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   platform?: Prisma.XOR<Prisma.PlatformScalarRelationFilter, Prisma.PlatformWhereInput>
   links?: Prisma.AffiliateLinkListRelationFilter
+  score?: Prisma.XOR<Prisma.ProductScoreNullableScalarRelationFilter, Prisma.ProductScoreWhereInput> | null
 }, "id" | "platformId_externalId">
 
 export type ProductOrderByWithAggregationInput = {
@@ -398,6 +401,7 @@ export type ProductCreateInput = {
   updatedAt?: Date | string
   platform: Prisma.PlatformCreateNestedOneWithoutProductsInput
   links?: Prisma.AffiliateLinkCreateNestedManyWithoutProductInput
+  score?: Prisma.ProductScoreCreateNestedOneWithoutProductInput
 }
 
 export type ProductUncheckedCreateInput = {
@@ -415,6 +419,7 @@ export type ProductUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   links?: Prisma.AffiliateLinkUncheckedCreateNestedManyWithoutProductInput
+  score?: Prisma.ProductScoreUncheckedCreateNestedOneWithoutProductInput
 }
 
 export type ProductUpdateInput = {
@@ -431,6 +436,7 @@ export type ProductUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   platform?: Prisma.PlatformUpdateOneRequiredWithoutProductsNestedInput
   links?: Prisma.AffiliateLinkUpdateManyWithoutProductNestedInput
+  score?: Prisma.ProductScoreUpdateOneWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateInput = {
@@ -448,6 +454,7 @@ export type ProductUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   links?: Prisma.AffiliateLinkUncheckedUpdateManyWithoutProductNestedInput
+  score?: Prisma.ProductScoreUncheckedUpdateOneWithoutProductNestedInput
 }
 
 export type ProductCreateManyInput = {
@@ -658,6 +665,20 @@ export type ProductUpdateOneRequiredWithoutLinksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutLinksInput, Prisma.ProductUpdateWithoutLinksInput>, Prisma.ProductUncheckedUpdateWithoutLinksInput>
 }
 
+export type ProductCreateNestedOneWithoutScoreInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutScoreInput, Prisma.ProductUncheckedCreateWithoutScoreInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutScoreInput
+  connect?: Prisma.ProductWhereUniqueInput
+}
+
+export type ProductUpdateOneRequiredWithoutScoreNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutScoreInput, Prisma.ProductUncheckedCreateWithoutScoreInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutScoreInput
+  upsert?: Prisma.ProductUpsertWithoutScoreInput
+  connect?: Prisma.ProductWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutScoreInput, Prisma.ProductUpdateWithoutScoreInput>, Prisma.ProductUncheckedUpdateWithoutScoreInput>
+}
+
 export type ProductCreateWithoutPlatformInput = {
   externalId: string
   name: string
@@ -671,6 +692,7 @@ export type ProductCreateWithoutPlatformInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   links?: Prisma.AffiliateLinkCreateNestedManyWithoutProductInput
+  score?: Prisma.ProductScoreCreateNestedOneWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutPlatformInput = {
@@ -687,6 +709,7 @@ export type ProductUncheckedCreateWithoutPlatformInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   links?: Prisma.AffiliateLinkUncheckedCreateNestedManyWithoutProductInput
+  score?: Prisma.ProductScoreUncheckedCreateNestedOneWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutPlatformInput = {
@@ -746,6 +769,7 @@ export type ProductCreateWithoutLinksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   platform: Prisma.PlatformCreateNestedOneWithoutProductsInput
+  score?: Prisma.ProductScoreCreateNestedOneWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutLinksInput = {
@@ -762,6 +786,7 @@ export type ProductUncheckedCreateWithoutLinksInput = {
   soldCount?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  score?: Prisma.ProductScoreUncheckedCreateNestedOneWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutLinksInput = {
@@ -793,6 +818,7 @@ export type ProductUpdateWithoutLinksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   platform?: Prisma.PlatformUpdateOneRequiredWithoutProductsNestedInput
+  score?: Prisma.ProductScoreUpdateOneWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutLinksInput = {
@@ -809,6 +835,89 @@ export type ProductUncheckedUpdateWithoutLinksInput = {
   soldCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  score?: Prisma.ProductScoreUncheckedUpdateOneWithoutProductNestedInput
+}
+
+export type ProductCreateWithoutScoreInput = {
+  externalId: string
+  name: string
+  price?: number | null
+  commissionRate?: number | null
+  url?: string | null
+  imageUrl?: string | null
+  category?: string | null
+  rating?: number | null
+  soldCount?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  platform: Prisma.PlatformCreateNestedOneWithoutProductsInput
+  links?: Prisma.AffiliateLinkCreateNestedManyWithoutProductInput
+}
+
+export type ProductUncheckedCreateWithoutScoreInput = {
+  id?: number
+  platformId: number
+  externalId: string
+  name: string
+  price?: number | null
+  commissionRate?: number | null
+  url?: string | null
+  imageUrl?: string | null
+  category?: string | null
+  rating?: number | null
+  soldCount?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  links?: Prisma.AffiliateLinkUncheckedCreateNestedManyWithoutProductInput
+}
+
+export type ProductCreateOrConnectWithoutScoreInput = {
+  where: Prisma.ProductWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductCreateWithoutScoreInput, Prisma.ProductUncheckedCreateWithoutScoreInput>
+}
+
+export type ProductUpsertWithoutScoreInput = {
+  update: Prisma.XOR<Prisma.ProductUpdateWithoutScoreInput, Prisma.ProductUncheckedUpdateWithoutScoreInput>
+  create: Prisma.XOR<Prisma.ProductCreateWithoutScoreInput, Prisma.ProductUncheckedCreateWithoutScoreInput>
+  where?: Prisma.ProductWhereInput
+}
+
+export type ProductUpdateToOneWithWhereWithoutScoreInput = {
+  where?: Prisma.ProductWhereInput
+  data: Prisma.XOR<Prisma.ProductUpdateWithoutScoreInput, Prisma.ProductUncheckedUpdateWithoutScoreInput>
+}
+
+export type ProductUpdateWithoutScoreInput = {
+  externalId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  commissionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  soldCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  platform?: Prisma.PlatformUpdateOneRequiredWithoutProductsNestedInput
+  links?: Prisma.AffiliateLinkUpdateManyWithoutProductNestedInput
+}
+
+export type ProductUncheckedUpdateWithoutScoreInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  platformId?: Prisma.IntFieldUpdateOperationsInput | number
+  externalId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  commissionRate?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rating?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  soldCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  links?: Prisma.AffiliateLinkUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateManyPlatformInput = {
@@ -839,6 +948,7 @@ export type ProductUpdateWithoutPlatformInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   links?: Prisma.AffiliateLinkUpdateManyWithoutProductNestedInput
+  score?: Prisma.ProductScoreUpdateOneWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutPlatformInput = {
@@ -855,6 +965,7 @@ export type ProductUncheckedUpdateWithoutPlatformInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   links?: Prisma.AffiliateLinkUncheckedUpdateManyWithoutProductNestedInput
+  score?: Prisma.ProductScoreUncheckedUpdateOneWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateManyWithoutPlatformInput = {
@@ -919,6 +1030,7 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   updatedAt?: boolean
   platform?: boolean | Prisma.PlatformDefaultArgs<ExtArgs>
   links?: boolean | Prisma.Product$linksArgs<ExtArgs>
+  score?: boolean | Prisma.Product$scoreArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["product"]>
 
@@ -976,6 +1088,7 @@ export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   platform?: boolean | Prisma.PlatformDefaultArgs<ExtArgs>
   links?: boolean | Prisma.Product$linksArgs<ExtArgs>
+  score?: boolean | Prisma.Product$scoreArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -990,6 +1103,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     platform: Prisma.$PlatformPayload<ExtArgs>
     links: Prisma.$AffiliateLinkPayload<ExtArgs>[]
+    score: Prisma.$ProductScorePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1401,6 +1515,7 @@ export interface Prisma__ProductClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   platform<T extends Prisma.PlatformDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PlatformDefaultArgs<ExtArgs>>): Prisma.Prisma__PlatformClient<runtime.Types.Result.GetResult<Prisma.$PlatformPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   links<T extends Prisma.Product$linksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$linksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AffiliateLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  score<T extends Prisma.Product$scoreArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$scoreArgs<ExtArgs>>): Prisma.Prisma__ProductScoreClient<runtime.Types.Result.GetResult<Prisma.$ProductScorePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1863,6 +1978,25 @@ export type Product$linksArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.AffiliateLinkScalarFieldEnum | Prisma.AffiliateLinkScalarFieldEnum[]
+}
+
+/**
+ * Product.score
+ */
+export type Product$scoreArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductScore
+   */
+  select?: Prisma.ProductScoreSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductScore
+   */
+  omit?: Prisma.ProductScoreOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductScoreInclude<ExtArgs> | null
+  where?: Prisma.ProductScoreWhereInput
 }
 
 /**

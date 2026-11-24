@@ -15,6 +15,7 @@ import { SyncModule } from './sync/sync.module.js';
 import { CommissionsModule } from './commissions/commissions.module.js';
 import { DashboardModule } from './dashboard/dashboard.module.js';
 import { UiModule } from './ui/ui.module.js';
+import { ResearchModule } from './research/research.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -38,6 +39,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     CommissionsModule,
     DashboardModule,
     UiModule,
+    ResearchModule,
   ],
   controllers: [AppController],
   providers: [

@@ -55,6 +55,9 @@
           <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-products" type="button" onclick="loadProducts()">
             <i class="bi bi-box-seam me-2"></i> Produk
           </button>
+          <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-research" type="button" onclick="loadResearch()">
+            <i class="bi bi-search me-2"></i> Riset Produk
+          </button>
           <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-contents" type="button" onclick="loadContents()">
             <i class="bi bi-camera-video me-2"></i> Konten & Link
           </button>
@@ -382,6 +385,82 @@
                   </thead>
                   <tbody id="syncRunsTableBody">
                     <tr><td colspan="6" class="text-center text-secondary py-3">Memuat...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 6: RISET PRODUK (FASE 4) -->
+          <div class="tab-pane fade" id="tab-research">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div>
+                <h4 class="fw-bold mb-0">Riset Produk & Rekomendasi</h4>
+                <p class="text-secondary small mb-0">Daftar produk paling layak dipromosikan berdasarkan skor komisi, harga, rating, dan tren penjualan</p>
+              </div>
+              <button class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1" onclick="recalculateScores()">
+                <i class="bi bi-arrow-repeat"></i> Hitung Ulang Skor
+              </button>
+            </div>
+
+            <!-- Filter Card -->
+            <div class="card p-3 shadow-sm mb-4">
+              <div class="row g-3 align-items-end">
+                <div class="col-sm-6 col-md-3">
+                  <label class="form-label small text-secondary">Niche / Kategori</label>
+                  <select class="form-select form-select-sm" id="researchCategoryFilter" onchange="loadResearch()">
+                    <option value="">Semua Kategori</option>
+                  </select>
+                </div>
+                <div class="col-sm-6 col-md-2">
+                  <label class="form-label small text-secondary">Min Skor</label>
+                  <select class="form-select form-select-sm" id="researchMinScoreFilter" onchange="loadResearch()">
+                    <option value="0">Semua Skor</option>
+                    <option value="50">&ge; 50 (Cukup)</option>
+                    <option value="70" selected>&ge; 70 (Bagus)</option>
+                    <option value="85">&ge; 85 (Sangat Bagus)</option>
+                  </select>
+                </div>
+                <div class="col-sm-6 col-md-2">
+                  <label class="form-label small text-secondary">Status</label>
+                  <select class="form-select form-select-sm" id="researchStatusFilter" onchange="loadResearch()">
+                    <option value="all">Semua Status</option>
+                    <option value="new">Baru</option>
+                    <option value="shortlisted" selected>⭐ Shortlist</option>
+                    <option value="used">✅ Digunakan</option>
+                    <option value="skipped">✕ Dilewati</option>
+                  </select>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                  <label class="form-label small text-secondary">Maks Harga (Rp)</label>
+                  <input type="number" class="form-control form-control-sm" id="researchMaxPriceFilter" placeholder="misal: 250000" onchange="loadResearch()">
+                </div>
+                <div class="col-sm-12 col-md-2 text-end">
+                  <button class="btn btn-sm btn-primary w-100" onclick="loadResearch()">
+                    <i class="bi bi-funnel"></i> Terapkan
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recommendations Table -->
+            <div class="card p-3 shadow-sm">
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                  <thead>
+                    <tr class="text-secondary small">
+                      <th class="text-center" style="width: 70px;">Skor</th>
+                      <th>Produk & Niche</th>
+                      <th>Platform</th>
+                      <th class="text-end">Harga</th>
+                      <th class="text-end">Komisi (%)</th>
+                      <th class="text-center">Performa Pasar</th>
+                      <th class="text-center">Status</th>
+                      <th class="text-end" style="min-width: 170px;">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="researchTableBody">
+                    <tr><td colspan="8" class="text-center text-secondary py-3">Memuat rekomendasi...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -938,6 +1017,117 @@
         loadSyncRuns();
         loadDashboard();
       }
+    }
+
+    // Tab 6: Riset Produk (Fase 4)
+    async function loadCategories() {
+      const cats = await apiFetch('/research/categories');
+      const select = document.getElementById('researchCategoryFilter');
+      if (select && cats) {
+        const curr = select.value;
+        select.innerHTML = '<option value="">Semua Kategori</option>';
+        cats.forEach(c => {
+          select.innerHTML += `<option value="${c}" ${c === curr ? 'selected' : ''}>${c}</option>`;
+        });
+      }
+    }
+
+    async function loadResearch() {
+      await loadCategories();
+      const cat = document.getElementById('researchCategoryFilter').value;
+      const minScore = document.getElementById('researchMinScoreFilter').value;
+      const status = document.getElementById('researchStatusFilter').value;
+      const maxPrice = document.getElementById('researchMaxPriceFilter').value;
+
+      const params = new URLSearchParams();
+      if (cat) params.append('category', cat);
+      if (minScore && minScore !== '0') params.append('minScore', minScore);
+      if (status) params.append('status', status);
+      if (maxPrice) params.append('maxPrice', maxPrice);
+
+      const items = await apiFetch('/research/recommendations?' + params.toString());
+      const tbody = document.getElementById('researchTableBody');
+      tbody.innerHTML = '';
+
+      if (items && items.length > 0) {
+        items.forEach(item => {
+          const p = item.product;
+          const scoreClass = item.score >= 75 ? 'text-bg-success' : (item.score >= 50 ? 'text-bg-warning' : 'text-bg-secondary');
+          const statusClass = item.status === 'shortlisted' ? 'text-bg-warning' : (item.status === 'used' ? 'text-bg-success' : (item.status === 'skipped' ? 'text-bg-danger' : 'text-bg-secondary'));
+          const ratingStars = p.rating ? `<i class="bi bi-star-fill text-warning me-1"></i>${p.rating}` : '-';
+          const soldText = p.soldCount ? `<span class="badge text-bg-dark border border-secondary">${p.soldCount.toLocaleString('id-ID')} terjual</span>` : '-';
+          const cuanPerPcs = p.price && p.commissionRate ? Math.round(p.price * (p.commissionRate / 100)) : 0;
+          const urlLink = p.url ? `<a href="${p.url}" target="_blank" class="text-secondary ms-1"><i class="bi bi-box-arrow-up-right"></i></a>` : '';
+
+          tbody.innerHTML += `
+            <tr>
+              <td class="text-center">
+                <span class="badge ${scoreClass} fs-6 px-2 py-1">${item.score}</span>
+              </td>
+              <td>
+                <div class="fw-bold text-light">${p.name} ${urlLink}</div>
+                <small class="text-secondary">${p.category || 'Umum'}</small>
+              </td>
+              <td><span class="badge text-bg-secondary">${p.platform?.name || '-'}</span></td>
+              <td class="text-end text-light">${formatRupiah(p.price)}</td>
+              <td class="text-end">
+                <span class="fw-bold text-info">${p.commissionRate ? p.commissionRate + '%' : '-'}</span>
+                <div class="small text-success">+${formatRupiah(cuanPerPcs)}/pcs</div>
+              </td>
+              <td class="text-center">
+                <div class="small">${ratingStars}</div>
+                <div class="small mt-1">${soldText}</div>
+              </td>
+              <td class="text-center">
+                <span class="badge ${statusClass}">${item.status}</span>
+              </td>
+              <td class="text-end">
+                <div class="btn-group btn-group-sm" role="group">
+                  <button class="btn btn-outline-warning" title="Shortlist" onclick="setProductStatus(${p.id}, 'shortlisted')">
+                    <i class="bi bi-star"></i>
+                  </button>
+                  <button class="btn btn-outline-success" title="Tandai Digunakan" onclick="setProductStatus(${p.id}, 'used')">
+                    <i class="bi bi-check2"></i>
+                  </button>
+                  <button class="btn btn-outline-danger" title="Skip" onclick="setProductStatus(${p.id}, 'skipped')">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                  <button class="btn btn-outline-primary" title="Generate Link" onclick="openLinkModalForProduct(${p.id})">
+                    <i class="bi bi-link-45deg"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-secondary py-3">Tidak ada produk yang cocok dengan kriteria filter</td></tr>';
+      }
+    }
+
+    async function setProductStatus(productId, status) {
+      const res = await apiFetch(`/research/products/${productId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status })
+      });
+      if (res) {
+        loadResearch();
+      }
+    }
+
+    async function recalculateScores() {
+      const res = await apiFetch('/research/calculate-scores', { method: 'POST' });
+      if (res) {
+        alert(`Berhasil menghitung ulang skor untuk ${res.scoredCount} produk.`);
+        loadResearch();
+      }
+    }
+
+    function openLinkModalForProduct(productId) {
+      populateLinkModalDropdowns().then(() => {
+        document.getElementById('modalLinkProductSelect').value = productId;
+        new bootstrap.Modal(document.getElementById('createLinkModal')).show();
+      });
     }
 
     // Init

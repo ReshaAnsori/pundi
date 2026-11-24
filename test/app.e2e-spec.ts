@@ -349,4 +349,91 @@ ${orderExternalId},ITEM_${uniqueSuffix},${generatedSubId},Rp 15.000,Rp 150.000,S
       expect(res.text).toContain('bootstrap');
     });
   });
+
+  describe('Product Research (Fase 4)', () => {
+    let testProductId: number;
+
+    beforeAll(async () => {
+      // Create a test product with good stats for scoring
+      const platRes = await request(app.getHttpServer())
+        .get('/platforms')
+        .set('x-api-key', apiKey);
+      const platId = platRes.body[0].id;
+
+      const pRes = await request(app.getHttpServer())
+        .post('/products')
+        .set('x-api-key', apiKey)
+        .send({
+          platformId: platId,
+          externalId: `research_${Date.now()}`,
+          name: 'Panci Listrik Serbaguna 1.5L',
+          price: 95000,
+          commissionRate: 15,
+          rating: 4.8,
+          soldCount: 3500,
+          category: 'Peralatan Dapur',
+        })
+        .expect(201);
+      testProductId = pRes.body.id;
+    });
+
+    it('POST /research/calculate-scores should compute composite scores', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/research/calculate-scores')
+        .set('x-api-key', apiKey)
+        .expect(201);
+
+      expect(res.body.scoredCount).toBeGreaterThanOrEqual(1);
+    });
+
+    it('GET /research/recommendations should return ranked products with score breakdown', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/research/recommendations?minScore=50')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBeGreaterThanOrEqual(1);
+
+      const top = res.body[0];
+      expect(top.score).toBeGreaterThanOrEqual(50);
+      expect(top.breakdown).toBeDefined();
+      expect(top.breakdown.commissionScore).toBeDefined();
+      expect(top.product).toBeDefined();
+    });
+
+    it('PATCH /research/products/:id/status should update product research status', async () => {
+      const res = await request(app.getHttpServer())
+        .patch(`/research/products/${testProductId}/status`)
+        .set('x-api-key', apiKey)
+        .send({
+          status: 'shortlisted',
+          notes: 'Cocok untuk video konten masak akhir pekan',
+        })
+        .expect(200);
+
+      expect(res.body.status).toBe('shortlisted');
+      expect(res.body.notes).toBe('Cocok untuk video konten masak akhir pekan');
+
+      // Verify filtered by shortlisted status
+      const listRes = await request(app.getHttpServer())
+        .get('/research/recommendations?status=shortlisted')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      const found = listRes.body.find((item: { productId: number }) => item.productId === testProductId);
+      expect(found).toBeDefined();
+      expect(found.status).toBe('shortlisted');
+    });
+
+    it('GET /research/categories should return available niches', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/research/categories')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body).toContain('Peralatan Dapur');
+    });
+  });
 });

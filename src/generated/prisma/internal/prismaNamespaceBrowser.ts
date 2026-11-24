@@ -56,7 +56,8 @@ export const ModelName = {
   Content: 'Content',
   AffiliateLink: 'AffiliateLink',
   Commission: 'Commission',
-  SyncRun: 'SyncRun'
+  SyncRun: 'SyncRun',
+  ProductScore: 'ProductScore'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -155,6 +156,20 @@ export const SyncRunScalarFieldEnum = {
 } as const
 
 export type SyncRunScalarFieldEnum = (typeof SyncRunScalarFieldEnum)[keyof typeof SyncRunScalarFieldEnum]
+
+
+export const ProductScoreScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  score: 'score',
+  status: 'status',
+  notes: 'notes',
+  breakdown: 'breakdown',
+  scoredAt: 'scoredAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductScoreScalarFieldEnum = (typeof ProductScoreScalarFieldEnum)[keyof typeof ProductScoreScalarFieldEnum]
 
 
 export const SortOrder = {

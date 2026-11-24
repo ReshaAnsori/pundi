@@ -71,3 +71,8 @@ export type Commission = Prisma.CommissionModel
  * 
  */
 export type SyncRun = Prisma.SyncRunModel
+/**
+ * Model ProductScore
+ * 
+ */
+export type ProductScore = Prisma.ProductScoreModel

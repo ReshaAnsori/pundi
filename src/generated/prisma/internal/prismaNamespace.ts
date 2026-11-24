@@ -402,7 +402,8 @@ export const ModelName = {
   Content: 'Content',
   AffiliateLink: 'AffiliateLink',
   Commission: 'Commission',
-  SyncRun: 'SyncRun'
+  SyncRun: 'SyncRun',
+  ProductScore: 'ProductScore'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -418,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "platform" | "product" | "content" | "affiliateLink" | "commission" | "syncRun"
+    modelProps: "platform" | "product" | "content" | "affiliateLink" | "commission" | "syncRun" | "productScore"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -866,6 +867,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ProductScore: {
+      payload: Prisma.$ProductScorePayload<ExtArgs>
+      fields: Prisma.ProductScoreFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductScoreFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductScorePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductScoreFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductScorePayload>
+        }
+        findFirst: {
+          args: Prisma.ProductScoreFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductScorePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductScoreFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductScorePayload>
+        }
+        findMany: {
+          args: Prisma.ProductScoreFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductScorePayload>[]
+        }
+        create: {
+          args: Prisma.ProductScoreCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductScorePayload>
+        }
+        createMany: {
+          args: Prisma.ProductScoreCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductScoreCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductScorePayload>[]
+        }
+        delete: {
+          args: Prisma.ProductScoreDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductScorePayload>
+        }
+        update: {
+          args: Prisma.ProductScoreUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductScorePayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductScoreDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductScoreUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductScoreUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductScorePayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductScoreUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductScorePayload>
+        }
+        aggregate: {
+          args: Prisma.ProductScoreAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductScore>
+        }
+        groupBy: {
+          args: Prisma.ProductScoreGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductScoreGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductScoreCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductScoreCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -985,6 +1060,20 @@ export const SyncRunScalarFieldEnum = {
 } as const
 
 export type SyncRunScalarFieldEnum = (typeof SyncRunScalarFieldEnum)[keyof typeof SyncRunScalarFieldEnum]
+
+
+export const ProductScoreScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  score: 'score',
+  status: 'status',
+  notes: 'notes',
+  breakdown: 'breakdown',
+  scoredAt: 'scoredAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductScoreScalarFieldEnum = (typeof ProductScoreScalarFieldEnum)[keyof typeof ProductScoreScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1200,6 +1289,7 @@ export type GlobalOmitConfig = {
   affiliateLink?: Prisma.AffiliateLinkOmit
   commission?: Prisma.CommissionOmit
   syncRun?: Prisma.SyncRunOmit
+  productScore?: Prisma.ProductScoreOmit
 }
 
 /* Types for Logging */
