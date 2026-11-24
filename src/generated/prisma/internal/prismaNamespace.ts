@@ -404,7 +404,10 @@ export const ModelName = {
   Commission: 'Commission',
   SyncRun: 'SyncRun',
   ProductScore: 'ProductScore',
-  PostingSchedule: 'PostingSchedule'
+  PostingSchedule: 'PostingSchedule',
+  AdCampaign: 'AdCampaign',
+  BudgetRule: 'BudgetRule',
+  AdSpendSnapshot: 'AdSpendSnapshot'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -420,7 +423,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "platform" | "product" | "content" | "affiliateLink" | "commission" | "syncRun" | "productScore" | "postingSchedule"
+    modelProps: "platform" | "product" | "content" | "affiliateLink" | "commission" | "syncRun" | "productScore" | "postingSchedule" | "adCampaign" | "budgetRule" | "adSpendSnapshot"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1016,6 +1019,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AdCampaign: {
+      payload: Prisma.$AdCampaignPayload<ExtArgs>
+      fields: Prisma.AdCampaignFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AdCampaignFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdCampaignPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AdCampaignFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdCampaignPayload>
+        }
+        findFirst: {
+          args: Prisma.AdCampaignFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdCampaignPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AdCampaignFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdCampaignPayload>
+        }
+        findMany: {
+          args: Prisma.AdCampaignFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdCampaignPayload>[]
+        }
+        create: {
+          args: Prisma.AdCampaignCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdCampaignPayload>
+        }
+        createMany: {
+          args: Prisma.AdCampaignCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AdCampaignCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdCampaignPayload>[]
+        }
+        delete: {
+          args: Prisma.AdCampaignDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdCampaignPayload>
+        }
+        update: {
+          args: Prisma.AdCampaignUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdCampaignPayload>
+        }
+        deleteMany: {
+          args: Prisma.AdCampaignDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AdCampaignUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AdCampaignUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdCampaignPayload>[]
+        }
+        upsert: {
+          args: Prisma.AdCampaignUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdCampaignPayload>
+        }
+        aggregate: {
+          args: Prisma.AdCampaignAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAdCampaign>
+        }
+        groupBy: {
+          args: Prisma.AdCampaignGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AdCampaignGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AdCampaignCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AdCampaignCountAggregateOutputType> | number
+        }
+      }
+    }
+    BudgetRule: {
+      payload: Prisma.$BudgetRulePayload<ExtArgs>
+      fields: Prisma.BudgetRuleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BudgetRuleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BudgetRulePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BudgetRuleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BudgetRulePayload>
+        }
+        findFirst: {
+          args: Prisma.BudgetRuleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BudgetRulePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BudgetRuleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BudgetRulePayload>
+        }
+        findMany: {
+          args: Prisma.BudgetRuleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BudgetRulePayload>[]
+        }
+        create: {
+          args: Prisma.BudgetRuleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BudgetRulePayload>
+        }
+        createMany: {
+          args: Prisma.BudgetRuleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BudgetRuleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BudgetRulePayload>[]
+        }
+        delete: {
+          args: Prisma.BudgetRuleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BudgetRulePayload>
+        }
+        update: {
+          args: Prisma.BudgetRuleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BudgetRulePayload>
+        }
+        deleteMany: {
+          args: Prisma.BudgetRuleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BudgetRuleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BudgetRuleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BudgetRulePayload>[]
+        }
+        upsert: {
+          args: Prisma.BudgetRuleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BudgetRulePayload>
+        }
+        aggregate: {
+          args: Prisma.BudgetRuleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBudgetRule>
+        }
+        groupBy: {
+          args: Prisma.BudgetRuleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BudgetRuleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BudgetRuleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BudgetRuleCountAggregateOutputType> | number
+        }
+      }
+    }
+    AdSpendSnapshot: {
+      payload: Prisma.$AdSpendSnapshotPayload<ExtArgs>
+      fields: Prisma.AdSpendSnapshotFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AdSpendSnapshotFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdSpendSnapshotPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AdSpendSnapshotFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdSpendSnapshotPayload>
+        }
+        findFirst: {
+          args: Prisma.AdSpendSnapshotFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdSpendSnapshotPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AdSpendSnapshotFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdSpendSnapshotPayload>
+        }
+        findMany: {
+          args: Prisma.AdSpendSnapshotFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdSpendSnapshotPayload>[]
+        }
+        create: {
+          args: Prisma.AdSpendSnapshotCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdSpendSnapshotPayload>
+        }
+        createMany: {
+          args: Prisma.AdSpendSnapshotCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AdSpendSnapshotCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdSpendSnapshotPayload>[]
+        }
+        delete: {
+          args: Prisma.AdSpendSnapshotDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdSpendSnapshotPayload>
+        }
+        update: {
+          args: Prisma.AdSpendSnapshotUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdSpendSnapshotPayload>
+        }
+        deleteMany: {
+          args: Prisma.AdSpendSnapshotDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AdSpendSnapshotUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AdSpendSnapshotUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdSpendSnapshotPayload>[]
+        }
+        upsert: {
+          args: Prisma.AdSpendSnapshotUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AdSpendSnapshotPayload>
+        }
+        aggregate: {
+          args: Prisma.AdSpendSnapshotAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAdSpendSnapshot>
+        }
+        groupBy: {
+          args: Prisma.AdSpendSnapshotGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AdSpendSnapshotGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AdSpendSnapshotCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AdSpendSnapshotCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1164,6 +1389,48 @@ export const PostingScheduleScalarFieldEnum = {
 } as const
 
 export type PostingScheduleScalarFieldEnum = (typeof PostingScheduleScalarFieldEnum)[keyof typeof PostingScheduleScalarFieldEnum]
+
+
+export const AdCampaignScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  platform: 'platform',
+  externalId: 'externalId',
+  linkId: 'linkId',
+  status: 'status',
+  dailyBudget: 'dailyBudget',
+  totalBudget: 'totalBudget',
+  currentSpend: 'currentSpend',
+  notes: 'notes',
+  pausedReason: 'pausedReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AdCampaignScalarFieldEnum = (typeof AdCampaignScalarFieldEnum)[keyof typeof AdCampaignScalarFieldEnum]
+
+
+export const BudgetRuleScalarFieldEnum = {
+  id: 'id',
+  platform: 'platform',
+  maxDailySpend: 'maxDailySpend',
+  maxMonthlySpend: 'maxMonthlySpend',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BudgetRuleScalarFieldEnum = (typeof BudgetRuleScalarFieldEnum)[keyof typeof BudgetRuleScalarFieldEnum]
+
+
+export const AdSpendSnapshotScalarFieldEnum = {
+  id: 'id',
+  campaignId: 'campaignId',
+  spend: 'spend',
+  recordedAt: 'recordedAt'
+} as const
+
+export type AdSpendSnapshotScalarFieldEnum = (typeof AdSpendSnapshotScalarFieldEnum)[keyof typeof AdSpendSnapshotScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1381,6 +1648,9 @@ export type GlobalOmitConfig = {
   syncRun?: Prisma.SyncRunOmit
   productScore?: Prisma.ProductScoreOmit
   postingSchedule?: Prisma.PostingScheduleOmit
+  adCampaign?: Prisma.AdCampaignOmit
+  budgetRule?: Prisma.BudgetRuleOmit
+  adSpendSnapshot?: Prisma.AdSpendSnapshotOmit
 }
 
 /* Types for Logging */

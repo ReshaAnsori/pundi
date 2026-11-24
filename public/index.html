@@ -64,6 +64,9 @@
           <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-scheduler" type="button" onclick="loadScheduler()">
             <i class="bi bi-calendar3 me-2"></i> Jadwal & Antrean
           </button>
+          <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-ads" type="button" onclick="loadAds()">
+            <i class="bi bi-megaphone me-2"></i> Ads & Budget Guard
+          </button>
           <button class="nav-link text-start py-2 px-3" data-bs-toggle="pill" data-bs-target="#tab-sync" type="button" onclick="loadSyncRuns()">
             <i class="bi bi-arrow-repeat me-2"></i> Sync & Impor CSV
           </button>
@@ -554,6 +557,125 @@
             </div>
           </div>
 
+          <!-- TAB 8: ADS MANAGER & BUDGET GUARD (FASE 7) -->
+          <div class="tab-pane fade" id="tab-ads">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div>
+                <h4 class="fw-bold mb-0">Ads Manager & Budget Guard</h4>
+                <p class="text-secondary small mb-0">Iklan berbayar terukur (Meta & TikTok) dengan proteksi budget otomatis dan atribusi subId unik</p>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-warning btn-sm" onclick="triggerBudgetGuardRun()">
+                  <i class="bi bi-shield-check me-1"></i> Jalankan Guard Check
+                </button>
+                <button class="btn btn-outline-info btn-sm" onclick="openBudgetGuardModal()">
+                  <i class="bi bi-sliders me-1"></i> Atur Budget Guard
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="openCreateCampaignModal()">
+                  <i class="bi bi-plus-lg me-1"></i> Buat Campaign Baru
+                </button>
+              </div>
+            </div>
+
+            <!-- Ads KPI Summary Cards -->
+            <div class="row g-3 mb-4">
+              <div class="col-sm-6 col-xl-3">
+                <div class="card p-3 shadow-sm h-100 border-secondary">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="text-secondary small">Total Spend Iklan</span>
+                      <h4 class="fw-bold text-danger mt-1 mb-0" id="adsTotalSpend">Rp 0</h4>
+                    </div>
+                    <div class="kpi-icon bg-danger-subtle text-danger"><i class="bi bi-cash"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3">
+                <div class="card p-3 shadow-sm h-100 border-secondary">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="text-secondary small">Pendapatan (Valid + Pending)</span>
+                      <h4 class="fw-bold text-success mt-1 mb-0" id="adsTotalRevenue">Rp 0</h4>
+                    </div>
+                    <div class="kpi-icon bg-success-subtle text-success"><i class="bi bi-wallet2"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3">
+                <div class="card p-3 shadow-sm h-100 border-secondary">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="text-secondary small">Laba Bersih Iklan</span>
+                      <h4 class="fw-bold mt-1 mb-0" id="adsNetProfit">Rp 0</h4>
+                    </div>
+                    <div class="kpi-icon bg-primary-subtle text-primary"><i class="bi bi-graph-up-arrow"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-3">
+                <div class="card p-3 shadow-sm h-100 border-secondary">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="text-secondary small">Overall ROAS</span>
+                      <h4 class="fw-bold text-info mt-1 mb-0" id="adsOverallRoas">0.00x</h4>
+                    </div>
+                    <div class="kpi-icon bg-info-subtle text-info"><i class="bi bi-percent"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Budget Guard Protection Status Card -->
+            <div class="card p-3 shadow-sm mb-4 border-secondary">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="small fw-bold text-secondary text-uppercase"><i class="bi bi-shield-lock text-warning me-1"></i> Budget Guard Proteksi Batas Spend</span>
+                <span class="badge bg-warning-subtle text-warning small">Auto-Pause Aktif</span>
+              </div>
+              <div class="row g-3" id="budgetGuardCardsContainer">
+                <div class="col-12 text-secondary small">Memuat aturan budget guard...</div>
+              </div>
+            </div>
+
+            <!-- Campaigns Table Card -->
+            <div class="card shadow-sm border-secondary">
+              <div class="card-header bg-transparent border-secondary py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h6 class="fw-bold mb-0"><i class="bi bi-megaphone me-2"></i> Daftar Campaign Iklan</h6>
+                <div class="d-flex gap-2">
+                  <select class="form-select form-select-sm" id="adsFilterPlatform" onchange="loadAds()" style="width: 140px;">
+                    <option value="">Semua Platform</option>
+                    <option value="meta">Meta Ads</option>
+                    <option value="tiktok">TikTok Ads</option>
+                  </select>
+                  <select class="form-select form-select-sm" id="adsFilterStatus" onchange="loadAds()" style="width: 150px;">
+                    <option value="">Semua Status</option>
+                    <option value="active">Active</option>
+                    <option value="paused">Paused</option>
+                    <option value="budget_exceeded">Budget Exceeded</option>
+                  </select>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0">
+                  <thead class="table-secondary text-uppercase small">
+                    <tr>
+                      <th>Campaign & Platform</th>
+                      <th>SubId / Link Affiliate Unik</th>
+                      <th>Budget Harian</th>
+                      <th>Spend Saat Ini</th>
+                      <th>Hasil (Valid + Pending)</th>
+                      <th>ROAS & Net Profit</th>
+                      <th>Status Guard</th>
+                      <th class="text-end" style="min-width: 150px;">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adsCampaignsTableBody">
+                    <tr><td colspan="8" class="text-center text-secondary py-3">Memuat campaign iklan...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -832,6 +954,95 @@
           <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
           <button type="button" class="btn btn-primary btn-sm" onclick="submitCreateSchedule()">
             <i class="bi bi-check-lg me-1"></i> Simpan Jadwal
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Campaign Modal (Fase 7) -->
+  <div class="modal fade" id="createCampaignModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark border-secondary">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title"><i class="bi bi-megaphone-fill me-2 text-primary"></i> Buat Campaign Iklan Baru</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small">Nama Campaign</label>
+            <input type="text" class="form-control form-control-sm" id="modalCampaignName" placeholder="misal: Meta Ads - Termos Viral Q4">
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small">Platform Iklan</label>
+              <select class="form-select form-select-sm" id="modalCampaignPlatform">
+                <option value="meta">Meta Ads (FB/IG)</option>
+                <option value="tiktok">TikTok Ads</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small">Budget Harian (Rp)</label>
+              <input type="number" step="5000" class="form-control form-control-sm" id="modalCampaignDailyBudget" placeholder="50000" value="50000">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small">Tautkan ke Produk Affiliate (Auto-Generate SubId)</label>
+            <select class="form-select form-select-sm" id="modalCampaignProductId">
+              <option value="">-- Pilih Produk --</option>
+            </select>
+            <div class="form-text small text-secondary">Sistem akan otomatis membuat link affiliate dengan subId unik khusus campaign ini.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small">Catatan Campaign</label>
+            <input type="text" class="form-control form-control-sm" id="modalCampaignNotes" placeholder="misal: Retargeting audience Shopee">
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="submitCreateCampaign()">
+            <i class="bi bi-check-lg me-1"></i> Buat Campaign & Pasang Guard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Budget Guard Settings Modal (Fase 7) -->
+  <div class="modal fade" id="budgetGuardModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark border-secondary">
+        <div class="modal-header border-secondary">
+          <h5 class="modal-title"><i class="bi bi-shield-lock-fill me-2 text-warning"></i> Atur Batas Budget Guard</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="small text-secondary mb-3">
+            Jika spend harian atau bulanan mencapai batas ini, sistem akan otomatis men-jeda (pause) semua campaign aktif untuk mencegah pembengkakan biaya.
+          </p>
+          <div class="mb-3">
+            <label class="form-label small">Lingkup Platform</label>
+            <select class="form-select form-select-sm" id="modalBudgetRulePlatform">
+              <option value="all">Semua Platform (Global Cap)</option>
+              <option value="meta">Meta Ads</option>
+              <option value="tiktok">TikTok Ads</option>
+            </select>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small">Maksimum Spend Harian (Rp)</label>
+              <input type="number" step="10000" class="form-control form-control-sm" id="modalBudgetRuleDaily" placeholder="200000" value="200000">
+            </div>
+            <div class="col-6">
+              <label class="form-label small">Maksimum Spend Bulanan (Rp)</label>
+              <input type="number" step="100000" class="form-control form-control-sm" id="modalBudgetRuleMonthly" placeholder="5000000" value="5000000">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-secondary">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+          <button type="button" class="btn btn-warning btn-sm" onclick="submitBudgetRule()">
+            <i class="bi bi-save me-1"></i> Simpan Batas Guard
           </button>
         </div>
       </div>
@@ -1677,6 +1888,239 @@
         alert('Jadwal berhasil dihapus!');
         loadScheduler();
         loadContents();
+      }
+    }
+
+    // Ads Manager & Budget Guard (Fase 7)
+    async function loadAds() {
+      const platform = document.getElementById('adsFilterPlatform').value;
+      const status = document.getElementById('adsFilterStatus').value;
+
+      const params = new URLSearchParams();
+      if (platform) params.append('platform', platform);
+      if (status) params.append('status', status);
+
+      const [summary, rules, campaigns] = await Promise.all([
+        apiFetch('/ads/summary'),
+        apiFetch('/ads/budget-rules'),
+        apiFetch(`/ads/campaigns?${params.toString()}`)
+      ]);
+
+      if (summary) {
+        document.getElementById('adsTotalSpend').textContent = formatRupiah(summary.totalSpend);
+        document.getElementById('adsTotalRevenue').textContent = formatRupiah(summary.totalRevenue);
+        const profitEl = document.getElementById('adsNetProfit');
+        profitEl.textContent = formatRupiah(summary.netProfit);
+        profitEl.className = 'fw-bold mt-1 mb-0 ' + (summary.netProfit >= 0 ? 'text-success' : 'text-danger');
+        document.getElementById('adsOverallRoas').textContent = summary.overallRoas.toFixed(2) + 'x';
+      }
+
+      // Budget Guard Status Cards
+      const guardContainer = document.getElementById('budgetGuardCardsContainer');
+      if (guardContainer && rules) {
+        guardContainer.innerHTML = '';
+        const rulesMap = {};
+        rules.forEach(r => { rulesMap[r.platform] = r; });
+
+        ['all', 'meta', 'tiktok'].forEach(p => {
+          const rule = rulesMap[p];
+          const label = p === 'all' ? 'Semua Platform (Global)' : p === 'meta' ? 'Meta Ads' : 'TikTok Ads';
+          const maxDaily = rule ? rule.maxDailySpend : 0;
+          const maxMonthly = rule ? rule.maxMonthlySpend : 0;
+
+          guardContainer.innerHTML += `
+            <div class="col-md-4">
+              <div class="p-2 border border-secondary rounded bg-dark">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="fw-bold small text-light">${label}</span>
+                  <span class="badge text-bg-${rule && rule.isActive ? 'warning' : 'secondary'} small">${rule && rule.isActive ? 'Guard Aktif' : 'Nonaktif'}</span>
+                </div>
+                <div class="small text-secondary mb-1">
+                  Maks Harian: <strong class="text-light">${formatRupiah(maxDaily)}</strong>
+                </div>
+                <div class="small text-secondary">
+                  Maks Bulanan: <strong class="text-light">${formatRupiah(maxMonthly)}</strong>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      // Campaigns Table
+      const tbody = document.getElementById('adsCampaignsTableBody');
+      tbody.innerHTML = '';
+
+      if (campaigns && campaigns.length > 0) {
+        campaigns.forEach(c => {
+          const m = c.metrics || { validCommissions: 0, pendingCommissions: 0, roas: 0, netProfit: 0 };
+          const statusBadge = c.status === 'active' ? 'success' : c.status === 'budget_exceeded' ? 'danger' : 'secondary';
+          const trackingUrl = c.link?.trackingUrl || '';
+          const subId = c.link?.subId || '-';
+
+          const toggleActionBtn = c.status === 'active' ? `
+            <button class="btn btn-sm btn-outline-warning me-1" onclick="toggleCampaignStatus(${c.id}, 'active')" title="Jeda Campaign">
+              <i class="bi bi-pause-fill"></i> Pause
+            </button>
+          ` : `
+            <button class="btn btn-sm btn-outline-success me-1" onclick="toggleCampaignStatus(${c.id}, '${c.status}')" title="Lanjutkan Campaign">
+              <i class="bi bi-play-fill"></i> Resume
+            </button>
+          `;
+
+          tbody.innerHTML += `
+            <tr>
+              <td>
+                <div class="fw-bold text-light">${c.name}</div>
+                <span class="badge text-bg-${c.platform === 'meta' ? 'primary' : 'dark'} border border-secondary text-uppercase">${c.platform}</span>
+                <span class="small text-secondary ms-1">#${c.id}</span>
+              </td>
+              <td>
+                <code class="text-info small">${subId}</code>
+                ${trackingUrl ? `
+                  <button class="btn btn-sm btn-outline-secondary py-0 px-1 ms-1" onclick="navigator.clipboard.writeText('${trackingUrl}'); alert('Tracking Link iklan disalin!')" title="Salin link iklan">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                ` : ''}
+              </td>
+              <td class="font-monospace small text-light">${formatRupiah(c.dailyBudget)}</td>
+              <td class="font-monospace small text-danger fw-bold">${formatRupiah(c.currentSpend)}</td>
+              <td>
+                <div class="font-monospace small text-success fw-bold">${formatRupiah(m.validCommissions + m.pendingCommissions)}</div>
+                <div class="text-secondary" style="font-size: 0.72rem;">Valid: ${formatRupiah(m.validCommissions)} &bull; Pend: ${formatRupiah(m.pendingCommissions)}</div>
+              </td>
+              <td>
+                <span class="badge text-bg-${m.roas >= 1 ? 'success' : m.roas >= 0.6 ? 'warning' : 'danger'}">${m.roas.toFixed(2)}x ROAS</span>
+                <div class="small ${m.netProfit >= 0 ? 'text-success' : 'text-danger'} mt-1">${formatRupiah(m.netProfit)}</div>
+              </td>
+              <td>
+                <span class="badge text-bg-${statusBadge}">${c.status}</span>
+                ${c.pausedReason ? `<div class="text-secondary mt-1" style="font-size: 0.72rem;">${c.pausedReason}</div>` : ''}
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-info me-1" onclick="recordCampaignSpend(${c.id})" title="Catat/Tambah Spend">
+                  <i class="bi bi-plus-slash-minus"></i> Spend
+                </button>
+                ${toggleActionBtn}
+              </td>
+            </tr>
+          `;
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-secondary py-3">Belum ada campaign iklan</td></tr>';
+      }
+    }
+
+    async function openCreateCampaignModal() {
+      await loadProducts();
+      const select = document.getElementById('modalCampaignProductId');
+      select.innerHTML = '<option value="">-- Pilih Produk Affiliate --</option>';
+      cachedProducts.forEach(p => {
+        select.innerHTML += `<option value="${p.id}">${p.name} (${p.platform?.code}) - Komisi ${p.commissionRate || 0}%</option>`;
+      });
+
+      document.getElementById('modalCampaignName').value = '';
+      document.getElementById('modalCampaignDailyBudget').value = '50000';
+      document.getElementById('modalCampaignNotes').value = '';
+
+      new bootstrap.Modal(document.getElementById('createCampaignModal')).show();
+    }
+
+    async function submitCreateCampaign() {
+      const name = document.getElementById('modalCampaignName').value.trim();
+      const platform = document.getElementById('modalCampaignPlatform').value;
+      const dailyBudget = parseInt(document.getElementById('modalCampaignDailyBudget').value);
+      const productId = parseInt(document.getElementById('modalCampaignProductId').value) || undefined;
+      const notes = document.getElementById('modalCampaignNotes').value.trim() || undefined;
+
+      if (!name || !dailyBudget) {
+        alert('Harap isi nama campaign dan budget harian!');
+        return;
+      }
+
+      const res = await apiFetch('/ads/campaigns', {
+        method: 'POST',
+        body: JSON.stringify({ name, platform, dailyBudget, productId, notes })
+      });
+
+      if (res) {
+        alert(`Campaign berhasil dibuat!\nID: #${res.id}\nSubId Iklan: ${res.link?.subId || 'N/A'}`);
+        bootstrap.Modal.getInstance(document.getElementById('createCampaignModal')).hide();
+        loadAds();
+      }
+    }
+
+    function openBudgetGuardModal() {
+      new bootstrap.Modal(document.getElementById('budgetGuardModal')).show();
+    }
+
+    async function submitBudgetRule() {
+      const platform = document.getElementById('modalBudgetRulePlatform').value;
+      const maxDailySpend = parseInt(document.getElementById('modalBudgetRuleDaily').value);
+      const maxMonthlySpend = parseInt(document.getElementById('modalBudgetRuleMonthly').value);
+
+      if (isNaN(maxDailySpend) || isNaN(maxMonthlySpend)) {
+        alert('Harap isi batas nominal rupiah!');
+        return;
+      }
+
+      const res = await apiFetch('/ads/budget-rules', {
+        method: 'PUT',
+        body: JSON.stringify({ platform, maxDailySpend, maxMonthlySpend, isActive: true })
+      });
+
+      if (res) {
+        alert(`Batas budget guard untuk platform '${platform}' berhasil disimpan!`);
+        bootstrap.Modal.getInstance(document.getElementById('budgetGuardModal')).hide();
+        loadAds();
+      }
+    }
+
+    async function recordCampaignSpend(campaignId) {
+      const val = prompt('Masukkan tambahan spend iklan dalam Rupiah:', '25000');
+      if (val === null) return;
+      const spend = parseInt(val);
+      if (isNaN(spend) || spend <= 0) {
+        alert('Nominal spend tidak valid!');
+        return;
+      }
+
+      const res = await apiFetch(`/ads/campaigns/${campaignId}/record-spend`, {
+        method: 'POST',
+        body: JSON.stringify({ spend })
+      });
+
+      if (res) {
+        let msg = `Spend berhasil dicatat! Total spend saat ini: ${formatRupiah(res.campaign.currentSpend)}`;
+        if (res.campaign.status === 'budget_exceeded') {
+          msg += `\n\nPERINGATAN BUDGET GUARD:\nCampaign otomatis di-pause karena: ${res.campaign.pausedReason}`;
+        }
+        alert(msg);
+        loadAds();
+      }
+    }
+
+    async function toggleCampaignStatus(campaignId, currentStatus) {
+      if (currentStatus === 'active') {
+        const reason = prompt('Alasan menjeda campaign:', 'Dijeda manual');
+        if (reason === null) return;
+        await apiFetch(`/ads/campaigns/${campaignId}/pause`, {
+          method: 'PATCH',
+          body: JSON.stringify({ reason: reason.trim() || undefined })
+        });
+      } else {
+        await apiFetch(`/ads/campaigns/${campaignId}/resume`, {
+          method: 'PATCH'
+        });
+      }
+      loadAds();
+    }
+
+    async function triggerBudgetGuardRun() {
+      const res = await apiFetch('/ads/guard/run-check', { method: 'POST' });
+      if (res) {
+        alert(`Budget Guard Check Selesai:\nJumlah campaign auto-paused: ${res.triggeredPauses}\nPlatform cap exceeded: ${res.platformBudgetExceeded.join(', ') || 'None'}`);
+        loadAds();
       }
     }
 

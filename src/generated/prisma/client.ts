@@ -81,3 +81,18 @@ export type ProductScore = Prisma.ProductScoreModel
  * 
  */
 export type PostingSchedule = Prisma.PostingScheduleModel
+/**
+ * Model AdCampaign
+ * 
+ */
+export type AdCampaign = Prisma.AdCampaignModel
+/**
+ * Model BudgetRule
+ * 
+ */
+export type BudgetRule = Prisma.BudgetRuleModel
+/**
+ * Model AdSpendSnapshot
+ * 
+ */
+export type AdSpendSnapshot = Prisma.AdSpendSnapshotModel

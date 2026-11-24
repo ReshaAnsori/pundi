@@ -58,7 +58,10 @@ export const ModelName = {
   Commission: 'Commission',
   SyncRun: 'SyncRun',
   ProductScore: 'ProductScore',
-  PostingSchedule: 'PostingSchedule'
+  PostingSchedule: 'PostingSchedule',
+  AdCampaign: 'AdCampaign',
+  BudgetRule: 'BudgetRule',
+  AdSpendSnapshot: 'AdSpendSnapshot'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -186,6 +189,48 @@ export const PostingScheduleScalarFieldEnum = {
 } as const
 
 export type PostingScheduleScalarFieldEnum = (typeof PostingScheduleScalarFieldEnum)[keyof typeof PostingScheduleScalarFieldEnum]
+
+
+export const AdCampaignScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  platform: 'platform',
+  externalId: 'externalId',
+  linkId: 'linkId',
+  status: 'status',
+  dailyBudget: 'dailyBudget',
+  totalBudget: 'totalBudget',
+  currentSpend: 'currentSpend',
+  notes: 'notes',
+  pausedReason: 'pausedReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AdCampaignScalarFieldEnum = (typeof AdCampaignScalarFieldEnum)[keyof typeof AdCampaignScalarFieldEnum]
+
+
+export const BudgetRuleScalarFieldEnum = {
+  id: 'id',
+  platform: 'platform',
+  maxDailySpend: 'maxDailySpend',
+  maxMonthlySpend: 'maxMonthlySpend',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BudgetRuleScalarFieldEnum = (typeof BudgetRuleScalarFieldEnum)[keyof typeof BudgetRuleScalarFieldEnum]
+
+
+export const AdSpendSnapshotScalarFieldEnum = {
+  id: 'id',
+  campaignId: 'campaignId',
+  spend: 'spend',
+  recordedAt: 'recordedAt'
+} as const
+
+export type AdSpendSnapshotScalarFieldEnum = (typeof AdSpendSnapshotScalarFieldEnum)[keyof typeof AdSpendSnapshotScalarFieldEnum]
 
 
 export const SortOrder = {

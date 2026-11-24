@@ -758,4 +758,171 @@ ${orderExternalId},ITEM_${uniqueSuffix},${generatedSubId},Rp 15.000,Rp 150.000,S
       expect(contentRes.body.status).toBe('draft');
     });
   });
+
+  describe('Ads Manager & Budget Guard (Fase 7)', () => {
+    let f7PlatformId: number;
+    let f7ProductId: number;
+
+    beforeEach(async () => {
+      const suffix = Math.random().toString(36).substring(2, 9) + Date.now();
+      const platRes = await request(app.getHttpServer())
+        .post('/platforms')
+        .set('x-api-key', apiKey)
+        .send({ name: `Platform F7 ${suffix}`, code: `f7_${suffix}` })
+        .expect(201);
+      f7PlatformId = platRes.body.id;
+
+      const prodRes = await request(app.getHttpServer())
+        .post('/products')
+        .set('x-api-key', apiKey)
+        .send({
+          externalId: `ext_f7_${suffix}`,
+          name: `Produk Ads ${suffix}`,
+          platformId: f7PlatformId,
+          price: 120000,
+        })
+        .expect(201);
+      f7ProductId = prodRes.body.id;
+    });
+
+    it('POST /ads/campaigns should create campaign and auto-generate unique subId for product', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/ads/campaigns')
+        .set('x-api-key', apiKey)
+        .send({
+          name: 'Iklan Meta Produk Viral',
+          platform: 'meta',
+          dailyBudget: 50000,
+          productId: f7ProductId,
+          notes: 'Testing audience 25-34',
+        })
+        .expect(201);
+
+      expect(res.body.id).toBeDefined();
+      expect(res.body.status).toBe('active');
+      expect(res.body.linkId).toBeDefined();
+      expect(res.body.link).toBeDefined();
+      expect(res.body.link.subId).toBeDefined();
+      expect(res.body.link.productId).toBe(f7ProductId);
+    });
+
+    it('PUT & GET /ads/budget-rules should configure spending guard caps', async () => {
+      const putRes = await request(app.getHttpServer())
+        .put('/ads/budget-rules')
+        .set('x-api-key', apiKey)
+        .send({
+          platform: 'meta',
+          maxDailySpend: 300000,
+          maxMonthlySpend: 8000000,
+          isActive: true,
+        })
+        .expect(200);
+
+      expect(putRes.body.platform).toBe('meta');
+      expect(putRes.body.maxDailySpend).toBe(300000);
+
+      const getRes = await request(app.getHttpServer())
+        .get('/ads/budget-rules')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(Array.isArray(getRes.body)).toBe(true);
+      const metaRule = getRes.body.find((r: { platform: string }) => r.platform === 'meta');
+      expect(metaRule).toBeDefined();
+      expect(metaRule.maxDailySpend).toBe(300000);
+    });
+
+    it('POST /ads/campaigns/:id/record-spend should trigger auto-pause when daily budget exceeded', async () => {
+      const campRes = await request(app.getHttpServer())
+        .post('/ads/campaigns')
+        .set('x-api-key', apiKey)
+        .send({
+          name: 'Iklan TikTok Budget Cap Test',
+          platform: 'tiktok',
+          dailyBudget: 40000,
+          productId: f7ProductId,
+        })
+        .expect(201);
+
+      const campaignId = campRes.body.id;
+
+      // 1. Spend 20.000 (< 40.000) -> remains active
+      const spend1 = await request(app.getHttpServer())
+        .post(`/ads/campaigns/${campaignId}/record-spend`)
+        .set('x-api-key', apiKey)
+        .send({ spend: 20000 })
+        .expect(201);
+
+      expect(spend1.body.campaign.status).toBe('active');
+      expect(spend1.body.campaign.currentSpend).toBe(20000);
+
+      // 2. Spend another 25.000 (total 45.000 > daily budget 40.000) -> auto pause!
+      const spend2 = await request(app.getHttpServer())
+        .post(`/ads/campaigns/${campaignId}/record-spend`)
+        .set('x-api-key', apiKey)
+        .send({ spend: 25000 })
+        .expect(201);
+
+      expect(spend2.body.campaign.status).toBe('budget_exceeded');
+      expect(spend2.body.campaign.currentSpend).toBe(45000);
+      expect(spend2.body.campaign.pausedReason).toContain('Batas budget harian');
+    });
+
+    it('PATCH /ads/campaigns/:id/resume & pause should manually toggle campaign status', async () => {
+      const campRes = await request(app.getHttpServer())
+        .post('/ads/campaigns')
+        .set('x-api-key', apiKey)
+        .send({
+          name: 'Manual Toggle Campaign',
+          platform: 'meta',
+          dailyBudget: 60000,
+          productId: f7ProductId,
+        })
+        .expect(201);
+
+      const campaignId = campRes.body.id;
+
+      // Pause manually
+      const pauseRes = await request(app.getHttpServer())
+        .patch(`/ads/campaigns/${campaignId}/pause`)
+        .set('x-api-key', apiKey)
+        .send({ reason: 'Jeda sementara evaluasi materi' })
+        .expect(200);
+
+      expect(pauseRes.body.status).toBe('paused');
+      expect(pauseRes.body.pausedReason).toBe('Jeda sementara evaluasi materi');
+
+      // Resume
+      const resumeRes = await request(app.getHttpServer())
+        .patch(`/ads/campaigns/${campaignId}/resume`)
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(resumeRes.body.status).toBe('active');
+      expect(resumeRes.body.pausedReason).toBeNull();
+    });
+
+    it('POST /ads/guard/run-check should evaluate active campaigns and return guard report', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/ads/guard/run-check')
+        .set('x-api-key', apiKey)
+        .expect(201);
+
+      expect(res.body.timestamp).toBeDefined();
+      expect(res.body.triggeredPauses).toBeDefined();
+      expect(Array.isArray(res.body.evaluations)).toBe(true);
+    });
+
+    it('GET /ads/summary should return overall ads performance metrics', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/ads/summary')
+        .set('x-api-key', apiKey)
+        .expect(200);
+
+      expect(res.body.totalSpend).toBeDefined();
+      expect(res.body.totalRevenue).toBeDefined();
+      expect(res.body.netProfit).toBeDefined();
+      expect(res.body.overallRoas).toBeDefined();
+    });
+  });
 });

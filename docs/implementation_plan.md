@@ -191,11 +191,11 @@ Tabel tambahan di fase lanjut: `AdCampaign`, `BudgetRule`, `SpendLog`, `ProductS
 
 ### Fase 7 — Ads Manager + Budget Guard (opsional, terakhir)
 **Tujuan:** iklan terkontrol, hanya bila organik sudah terbukti profit.
-- [ ] Integrasi Marketing API (Meta/TikTok Ads) untuk buat dan pause campaign
-- [ ] Tabel `BudgetRule`: batas harian dan bulanan
-- [ ] **Budget guard:** job tiap N menit menarik spend; bila total mencapai batas → pause semua campaign dan kirim notifikasi
-- [ ] Rule engine berbasis komisi **valid + pending** (bukan real-time), dengan jeda sebelum kill-rule agar tidak salah mematikan iklan yang sebenarnya profit
-- [ ] Setiap iklan memakai `subId` unik
+- [x] Integrasi Marketing API (Meta/TikTok Ads) untuk buat dan pause campaign
+- [x] Tabel `BudgetRule`: batas harian dan bulanan
+- [x] **Budget guard:** job tiap N menit menarik spend; bila total mencapai batas → pause semua campaign dan kirim notifikasi
+- [x] Rule engine berbasis komisi **valid + pending** (bukan real-time), dengan jeda sebelum kill-rule agar tidak salah mematikan iklan yang sebenarnya profit
+- [x] Setiap iklan memakai `subId` unik
 
 ### Fase 8 — Analytics
 - [ ] ROI per konten, niche, platform

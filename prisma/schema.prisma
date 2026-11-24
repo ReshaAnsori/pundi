@@ -64,6 +64,7 @@ model AffiliateLink {
   product     Product      @relation(fields: [productId], references: [id])
   content     Content?     @relation(fields: [contentId], references: [id])
   commissions Commission[]
+  campaigns   AdCampaign[]
 }
 
 model Commission {
@@ -118,5 +119,41 @@ model PostingSchedule {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   content      Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+}
+
+model AdCampaign {
+  id             Int               @id @default(autoincrement())
+  name           String
+  platform       String            // "meta" | "tiktok"
+  externalId     String?           // ID campaign di Meta/TikTok Ads
+  linkId         Int?              // Link affiliate dengan subId unik
+  status         String            @default("active") // "active" | "paused" | "completed" | "budget_exceeded"
+  dailyBudget    Int               // rupiah
+  totalBudget    Int?              // rupiah
+  currentSpend   Int               @default(0) // rupiah
+  notes          String?
+  pausedReason   String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  link           AffiliateLink?    @relation(fields: [linkId], references: [id])
+  spendSnapshots AdSpendSnapshot[]
+}
+
+model BudgetRule {
+  id              Int      @id @default(autoincrement())
+  platform        String   @unique // "meta" | "tiktok" | "all"
+  maxDailySpend   Int      // rupiah
+  maxMonthlySpend Int      // rupiah
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model AdSpendSnapshot {
+  id         Int        @id @default(autoincrement())
+  campaignId Int
+  spend      Int        // rupiah
+  recordedAt DateTime   @default(now())
+  campaign   AdCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
 }
 
